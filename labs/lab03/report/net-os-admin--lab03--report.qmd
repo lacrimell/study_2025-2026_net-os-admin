@@ -1,67 +1,743 @@
 ---
+# Preamble
+
 ## Author
 author:
-  name: Дмитрий Сергеевич Кулябов
-  degrees: DSc
-  orcid: 0000-0002-0877-7063
-  email: kulyabov-ds@rudn.ru
+  name: Калашникова Ольга Сергеевна
+  email: 1132231846@rudn.ru
   affiliation:
     - name: Российский университет дружбы народов
       country: Российская Федерация
       postal-code: 117198
       city: Москва
       address: ул. Миклухо-Маклая, д. 6
-
 ## Title
-title: "Шаблон отчёта по лабораторной работе"
-subtitle: "Простейший вариант"
+title: "Отчёт по лабораторной работе №3"
+subtitle: "Дисциплина: Администрирование сетевых подсистем"
 license: "CC BY"
+## Generic options
+lang: ru-RU
+number-sections: true
+toc: true
+toc-title: "Содержание"
+toc-depth: 2
+## Crossref customization
+crossref:
+  lof-title: "Список иллюстраций"
+  lot-title: "Список таблиц"
+  lol-title: "Листинги"
+## Bibliography
+bibliography:
+  - bib/cite.bib
+csl: _resources/csl/gost-r-7-0-5-2008-numeric.csl
+## Formats
+format:
+### Pdf output format
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: false
+    toc-depth: 2
+    lof: true # List of figures
+    lot: true # List of tables
+#### Document
+    documentclass: scrreprt
+    papersize: a4
+    fontsize: 12pt
+    linestretch: 1.5
+#### Language
+    babel-lang: russian
+    babel-otherlangs: english
+#### Biblatex
+    cite-method: biblatex
+    biblio-style: gost-numeric
+    biblatexoptions:
+      - backend=biber
+      - langhook=extras
+      - autolang=other*
+#### Misc options
+    csquotes: true
+    indent: true
+    header-includes: |
+      \usepackage{indentfirst}
+      \usepackage{float}
+      \floatplacement{figure}{H}
+      \usepackage[math,RM={Scale=0.94},SS={Scale=0.94},SScon={Scale=0.94},TT={Scale=MatchLowercase,FakeStretch=0.9},DefaultFeatures={Ligatures=Common}]{plex-otf}
+### Docx output format
+  docx:
+    toc: true
+    number-sections: true
+    toc-depth: 2
 ---
 
 # Цель работы
 
-Здесь приводится формулировка цели лабораторной работы.
-Формулировки цели для каждой лабораторной работы приведены в методических указаниях.
-
-Цель данного шаблона --- максимально упростить подготовку отчётов по лабораторным работам.
-Модифицируя данный шаблон, студенты смогут без труда подготовить отчёт по лабораторным работам, а также познакомиться с основными возможностями разметки Markdown.
+Целью данной работы является приобретение практических навыков по установке и конфигурированию DHCP-сервера, а также настройке интеграции DHCP с DNS через механизм динамического обновления (DDNS).
 
 # Задание
 
-Здесь приводится описание задания в соответствии с рекомендациями методического пособия и выданным вариантом.
-
-# Теоретическое введение
-
-Здесь описываются теоретические аспекты, связанные с выполнением работы.
-
-Например, в [табл. @tbl-std-dir] приведено краткое описание стандартных каталогов Unix.
-
-| Имя каталога | Описание каталога                                                                                                          |
-|--------------|----------------------------------------------------------------------------------------------------------------------------|
-| `/`          | Корневая директория, содержащая всю файловую                                                                               |
-| `/bin `      | Основные системные утилиты, необходимые как в однопользовательском режиме, так и при обычной работе всем пользователям     |
-| `/etc`       | Общесистемные конфигурационные файлы и файлы конфигурации установленных программ                                           |
-| `/home`      | Содержит домашние директории пользователей, которые, в свою очередь, содержат персональные настройки и данные пользователя |
-| `/media`     | Точки монтирования для сменных носителей                                                                                   |
-| `/root`      | Домашняя директория пользователя  `root`                                                                                   |
-| `/tmp`       | Временные файлы                                                                                                            |
-| `/usr`       | Вторичная иерархия для данных пользователя                                                                                 |
-
-: Описание некоторых каталогов файловой системы GNU Linux {#tbl-std-dir}
-
-Более подробно про Unix см. в [@tanenbaum_book_modern-os_ru; @robbins_book_bash_en; @zarrelli_book_mastering-bash_en; @newham_book_learning-bash_en].
+1. Установить на виртуальной машине server DHCP-сервер Kea.
+2. Настроить виртуальную машину server в качестве DHCP-сервера для виртуальной внутренней сети 192.168.1.0/24.
+3. Проверить корректность работы DHCP-сервера в виртуальной внутренней сети путём запуска виртуальной машины client и применения соответствующих утилит диагностики.
+4. Настроить обновление DNS-зоны при появлении в виртуальной внутренней сети новых узлов (DDNS).
+5. Проверить корректность работы DHCP-сервера и обновления DNS-зоны в виртуальной внутренней сети.
+6. Написать скрипт для Vagrant, фиксирующий действия по установке и настройке DHCP-сервера во внутреннем окружении виртуальной машины server.
 
 # Выполнение лабораторной работы
 
-Описываются проведённые действия, в качестве иллюстрации даётся ссылка на иллюстрацию ([рис. @fig-001]).
+## Установка DHCP-сервера
 
-![V Сольвеевский конгресс (1927) «Электроны и фотоны»](image/solvay.jpg){#fig-001 width=70%}
+Загрузили операционную систему и перешли в рабочий каталог с проектом:
+
+```
+cd /var/tmp/oskalashnikova/vagrant
+```
+
+Запустили виртуальную машину server:
+
+```
+make server-up
+```
+
+Далее на виртуальной машине server вошли под созданным пользователем `oskalashnikova` и открыли терминал. Перешли в режим суперпользователя:
+
+```
+sudo -i
+```
+
+![Переход в режим суперпользователя](image/1.png){#fig-001 width=70%}
+
+Установили пакет `kea` (DHCP-сервер):
+
+```
+dnf -y install kea
+```
+
+![Установка kea](image/2.png){#fig-002 width=70%}
+
+## Конфигурирование DHCP-сервера
+
+Сохранили резервную копию конфигурационного файла DHCP-сервера:
+
+```
+cp /etc/kea/kea-dhcp4.conf /etc/kea/kea-dhcp4.conf__$(date -I)
+```
+
+![Создание резервной копии конфигурационного файла](image/3.png){#fig-003 width=70%}
+
+Отредактировали файл `/etc/kea/kea-dhcp4.conf`. Внесли следующие изменения:
+
+1. Заменили опцию `domain-name` и `domain-search` на `oskalashnikova.net`:
+
+```
+{
+    "code": 15,
+    "data": "oskalashnikova.net"
+},
+{
+    "name": "domain-search",
+    "data": "oskalashnikova.net"
+},
+```
+
+2. Указали DNS-сервер:
+
+```
+{
+    "name": "domain-name-servers",
+    "data": "192.168.1.1"
+},
+```
+
+![Настройка опций DHCP](image/4.png){#fig-004 width=70%}
+
+3. Настроили подсеть, диапазон адресов и шлюз:
+
+```
+"subnet4": [
+    {
+    "id": 1,
+    "subnet": "192.168.1.0/24",
+    "pools": [ { "pool": "192.168.1.30 - 192.168.1.199" } ],
+    "option-data": [
+    {
+    "name": "routers",
+    "data": "192.168.1.1"
+    }
+    ]
+}
+```
+
+![Настройка подсети DHCP](image/5.png){#fig-005 width=70%}
+
+4. Указали интерфейс для прослушивания (`eth1`):
+
+```
+"interfaces-config": {
+    "interfaces": [ "eth1" ]
+},
+```
+
+![Настройка интерфейсов DHCP](image/6.png){#fig-006 width=70%}
+
+Проверили корректность конфигурационного файла:
+
+```
+kea-dhcp4 -t /etc/kea/kea-dhcp4.conf
+```
+
+![Проверка конфигурации DHCP](image/7.png){#fig-007 width=70%}
+
+Перезагрузили конфигурацию systemd и включили автозагрузку DHCP-сервера:
+
+```
+systemctl --system daemon-reload
+systemctl enable kea-dhcp4.service
+```
+
+![Включение автозагрузки DHCP-сервера](image/8.png){#fig-008 width=70%}
+
+## Настройка DNS-записей для DHCP-сервера
+
+Добавили запись для DHCP-сервера в файл прямой зоны `/var/named/master/fz`:
+
+```
+dhcp    A    192.168.1.1
+```
+
+![Прямая зона DNS](image/9.png){#fig-009 width=70%}
+
+Обновили файл прямой зоны, увеличив серийный номер.
+
+![Обновлённая прямая зона DNS](image/10.png){#fig-010 width=70%}
+
+Добавили PTR-запись в файл обратной зоны `/var/named/master/rz/192.168.1`:
+
+```
+1    PTR    dhcp.oskalashnikova.net.
+```
+
+![Обратная зона DNS](image/11.png){#fig-011 width=70%}
+
+Перезапустили DNS-сервер:
+
+```
+systemctl restart named
+```
+
+![Перезапуск named](image/12.png){#fig-012 width=70%}
+
+Проверили разрешение имени DHCP-сервера:
+
+```
+ping dhcp.oskalashnikova.net
+```
+
+![Пинг DHCP-сервера по имени](image/13.png){#fig-013 width=70%}
+
+## Настройка межсетевого экрана
+
+Проверили текущие службы в firewalld и добавили службу `dhcp`:
+
+```
+firewall-cmd --list-services
+firewall-cmd --get-services
+firewall-cmd --add-service=dhcp
+firewall-cmd --add-service=dhcp --permanent
+```
+
+![Настройка firewalld для DHCP](image/14.png){#fig-014 width=70%}
+
+## Восстановление контекста безопасности SELinux
+
+Восстановили контекст безопасности для конфигурационных файлов:
+
+```
+restorecon -vR /etc
+restorecon -vR /var/named
+restorecon -vR /var/lib/kea/
+```
+
+![Восстановление контекста SELinux](image/15.png){#fig-015 width=70%}
+
+## Запуск DHCP-сервера и мониторинг
+
+Запустили DHCP-сервер:
+
+```
+systemctl start kea-dhcp4.service
+```
+
+![Запуск DHCP-сервера](image/16.png){#fig-016 width=70%}
+
+## Настройка клиента
+
+Для корректной работы клиента в виртуальной сети был создан скрипт маршрутизации `01-routing.sh`:
+
+```
+#!/bin/bash
+echo "Provisioning script $0"
+nmcli connection modify "eth1" ipv4.gateway "192.168.1.1"
+nmcli connection up "eth1"
+nmcli connection modify eth0 ipv4.never-default true
+nmcli connection modify eth0 ipv6.never-default true
+nmcli connection down eth0
+nmcli connection up eth0
+# systemctl restart NetworkManager
+```
+
+![Скрипт маршрутизации клиента](image/17.png){#fig-017 width=70%}
+
+Скрипт был подключен в Vagrantfile:
+
+```
+client.vm.provision "client routing",
+    type: "shell",
+    preserve_order: true,
+    run: "always",
+    path: "provision/client/01-routing.sh"
+```
+
+![Подключение скрипта в Vagrantfile](image/18.png){#fig-018 width=70%}
+
+## Настройка обновления DNS-зоны (DDNS)
+
+### Создание TSIG-ключа
+
+Для безопасного обновления DNS-зоны был создан TSIG-ключ. Сначала создали директорию для ключей, затем сгенерировали ключ:
+
+```
+mkdir -p /etc/named/keys
+tsig-keygen -a HMAC-SHA512 DHCP_UPDATER > /etc/named/keys/dhcp_updater.key
+```
+
+![Создание TSIG-ключа](image/22.png){#fig-019 width=70%}
+
+Содержимое файла ключа:
+
+```
+key "DHCP_UPDATER" {
+    algorithm hmac-sha512;
+    secret "3gy+kKq47sZTwNWC+PUrPfTdN8RvB3p9zW4GakQpPPLt0gU9D0d8md8z8tNbEfwGBmxWOmr5YSZ00G2bs5RkBxG";
+};
+```
+
+![Содержимое файла dhcp_updater.key](image/23.png){#fig-020 width=70%}
+
+### Настройка прав доступа
+
+Изменили владельца директории с ключами на named:
+
+```
+chown -R named:named /etc/named/keys
+```
+
+![Изменение владельца директории ключей](image/24.png){#fig-021 width=70%}
+
+### Обновление конфигурации named
+
+В файл `/etc/named.conf` были добавлены включения для TSIG-ключа:
+
+```
+include "/etc/named/oskalashnikova.net";
+include "/etc/named/keys/dhcp_updater.key";
+```
+
+![Конфигурация named.conf](image/25.png){#fig-022 width=70%}
+
+Создали файл конфигурации зоны `/etc/named/oskalashnikova.net` с политиками обновления:
+
+```
+zone "oskalashnikova.net" IN {
+    type master;
+    file "master/fz/oskalashnikova.net";
+    update-policy {
+        grant DHCP_UPDATER wildcard *.oskalashnikova.net A DHCID;
+    };
+};
+
+zone "1.168.192.in-addr.arpa" IN {
+    type master;
+    file "master/rz/192.168.1";
+    update-policy {
+        grant DHCP_UPDATER wildcard *.1.168.192.in-addr.arpa PTR DHCID;
+    };
+};
+```
+
+![Конфигурация зоны с политиками обновления](image/26.png){#fig-023 width=70%}
+
+Проверили корректность конфигурации DNS-сервера:
+
+```
+named-checkconf
+```
+
+![Проверка конфигурации named](image/27.png){#fig-024 width=70%}
+
+Перезапустили DNS-сервер:
+
+```
+systemctl restart named
+```
+
+![Перезапуск named](image/28.png){#fig-025 width=70%}
+
+### Настройка Kea для DDNS
+
+Создали файл TSIG-ключей для Kea в формате JSON:
+
+```
+"tsig-keys": [
+    {
+        "name": "DHCP_UPDATER",
+        "algorithm": "hmac-sha512",
+        "secret": "3gy+Kq47sZTwNWC+PUrPFTdN8RvB3p9zW4GakQpPPIt0gU9D0d8md828tNbEfwGBmxW0mr5YSZ0002bs5RkBx0=="
+    }
+]
+```
+
+![Файл tsig-keys.json](image/29.png){#fig-026 width=70%}
+
+Изменили владельца файла ключей:
+
+```
+chown kea:kea /etc/kea/tsig-keys.json
+```
+
+![Изменение владельца tsig-keys.json](image/30.png){#fig-027 width=70%}
+
+Установили правильные права доступа на файл с TSIG-ключами:
+
+```
+chmod 640 /etc/kea/tsig-keys.json
+```
+
+![Настройка прав доступа для tsig-keys.json](image/31.png){#fig-028 width=70%}
+
+Создали конфигурационный файл для службы DDNS `/etc/kea/kea-dhcp-ddns.conf`:
+
+```
+{
+    "DhcpDdns": {
+        "ip-address": "127.0.0.1",
+        "port": 53001,
+        "control-socket": {
+            "socket-type": "unix",
+            "socket-name": "/run/kea/kea-ddns-ctrl-socket"
+        },
+        "tsig-keys": [
+            {
+                "name": "DHCP_UPDATER",
+                "algorithm": "hmac-sha512",
+                "secret": "3gy+Kq47sZTwNWC+PUrPTrdN8RvB3p9zW4GakQpPPltQgJ9DQd8md82StNbEfwGBmxWOmr5YSZOOO2bs5RkBxQ=="
+            }
+        ],
+        "forward-ddns": {
+            "ddns-domains": [
+                {
+                    "name": "oskalashnikova.net",
+                    "key-name": "DHCP_UPDATER",
+                    "dns-servers": [
+                        { "ip-address": "192.168.1.1" }
+                    ]
+                }
+            ]
+        },
+        "reverse-ddns": {
+            "ddns-domains": [
+                {
+                    "name": "1.168.192.in-addr.arpa",
+                    "key-name": "DHCP_UPDATER",
+                    "dns-servers": [
+                        { "ip-address": "192.168.1.1" }
+                    ]
+                }
+            ]
+        },
+        "loggers": [
+            {
+                "name": "kea-dhcp-ddns",
+                "output_options": [
+                    {
+                        "output": "stdout",
+                        "pattern": "%-5p %m\n"
+                    }
+                ],
+                "severity": "INFO",
+                "debuglevel": 0
+            }
+        ]
+    }
+}
+```
+
+![Конфигурационный файл kea-dhcp-ddns.conf](image/32.png){#fig-029 width=70%}
+
+Изменили владельца файла конфигурации DDNS:
+
+```
+chown kea:kea /etc/kea/kea-dhcp-ddns.conf
+```
+
+![Изменение владельца kea-dhcp-ddns.conf](image/33.png){#fig-030 width=70%}
+
+Проверили синтаксис конфигурационного файла DDNS:
+
+```
+kea-dhcp-ddns -t /etc/kea/kea-dhcp-ddns.conf
+```
+
+**Результат:** Конфигурация проверена успешно, сервер будет слушать на 127.0.0.1, порт 53001, используя UDP.
+
+![Проверка конфигурации DDNS](image/34.png){#fig-031 width=70%}
+
+Включили и запустили службу DHCP-DDNS:
+
+```
+systemctl enable --now kea-dhcp-ddns.service
+```
+
+![Запуск службы kea-dhcp-ddns](image/35.png){#fig-032 width=70%}
+
+Проверили статус службы DDNS:
+
+```
+systemctl status kea-dhcp-ddns.service
+```
+
+**Результат:** Служба активна и работает с версией Kea DHCP-DDNS server 2.6.3.
+
+![Статус службы kea-dhcp-ddns](image/36.png){#fig-033 width=70%}
+
+### Настройка интеграции DHCP с DDNS
+
+Добавили в основной конфигурационный файл DHCP (`/etc/kea/kea-dhcp4.conf`) настройки для включения динамического обновления DNS:
+
+```json
+"dhcp-ddns": {
+    "enable-updates": true
+},
+"ddns-qualifying-suffix": "oskalashnikova.net",
+"ddns-override-client-update": true,
+```
+
+![Добавление настроек DDNS в kea-dhcp4.conf](image/37.png){#fig-034 width=70%}
+
+Проверили обновлённую конфигурацию DHCP:
+
+```
+kea-dhcp4 -t /etc/kea/kea-dhcp4.conf
+```
+
+**Результат:** Конфигурация успешно проверена, добавлена новая подсеть 192.168.1.0/24 с параметрами t1=900, t2=1800, valid-lifetime=3600. Сервер слушает на интерфейсе eth1.
+
+![Проверка обновлённой конфигурации DHCP](image/38.png){#fig-035 width=70%}
+
+Перезапустили службу DHCP:
+
+```
+systemctl restart kea-dhcp4.service
+```
+
+![Перезапуск службы kea-dhcp4](image/39.png){#fig-036 width=70%}
+
+Проверили статус службы DHCP после перезапуска:
+
+```
+systemctl status kea-dhcp4.service
+```
+
+**Результат:** Служба активна и работает.
+
+![Статус службы kea-dhcp4 после перезапуска](image/40.png){#fig-037 width=70%}
+
+## Тестирование работы DHCP и DDNS
+
+### Настройка клиента для получения IP-адреса
+
+На клиенте выполнили настройку сетевого интерфейса для получения адреса от DHCP:
+
+```
+sudo -i
+nmcli connection delete eth2
+nmcli connection add type ethernet ifname eth1 con-name eth1
+nmcli connection modify eth1 ipv4.method auto
+nmcli connection up eth1
+```
+
+![Настройка интерфейса eth1 на клиенте](image/50.png){#fig-038 width=70%}
+
+Проверили конфигурацию интерфейса eth1:
+
+```
+ip addr show eth1
+```
+
+**Результат:** Интерфейс eth1 получил IP-адрес 10.131.231.132/29 из другой сети.
+
+![Проверка конфигурации интерфейса eth1](image/51.png){#fig-039 width=70%}
+
+### Корректная настройка интерфейса для работы с DHCP
+
+Для правильной работы с DHCP-сервером настроили интерфейс eth2:
+
+```
+nmcli connection add type ethernet ifname eth2 con-name eth2 ipv4.method auto
+nmcli connection up eth2
+ip addr show eth2
+```
+
+**Результат:** Интерфейс eth2 успешно получил IP-адрес 192.168.1.30/24 от DHCP-сервера.
+
+![Успешная настройка интерфейса eth2](image/55.png){#fig-040 width=70%}
+
+### Проверка работы DHCP на сервере
+
+После успешного получения IP-адреса клиентом проверили работу системы на сервере:
+
+```
+ls /var/named/master/fz
+cat /var/lib/kea/kea-leases4.csv
+```
+
+**Результат:** 
+- Файл зоны DNS: `oskalashnikova.net`
+- В базе данных аренд появились записи для IP-адреса 192.168.1.30 с MAC-адресом 08:00:27:46:30:15
+- Записи указывают на имя хоста `client.oskalashnikova.net`
+
+![Проверка базы данных аренд DHCP](image/56.png){#fig-041 width=70%}
+
+Проверили статус службы DDNS:
+
+```
+systemctl enable --now kea-dhcp-ddns.service
+systemctl status kea-dhcp-ddns.service
+```
+
+**Результат:** Служба DDNS работает, но в журнале видны ошибки обновления DNS-записей. Несмотря на ошибки, служба пытается обновить запись для `client.oskalashnikova.net` с IP-адресом 192.168.1.30.
+
+![Статус службы DDNS с ошибками](image/57.png){#fig-042 width=70%}
+
+### Проверка создания журнального файла DDNS
+
+Проверили наличие журнального файла обновлений DNS:
+
+```
+ls /var/named/master/fz
+```
+
+**Результат:** Появился файл `oskalashnikova.net.jnl`, что свидетельствует о работе механизма динамического обновления DNS.
+
+![Проверка журнального файла DDNS](image/66.png){#fig-043 width=70%}
+
+### Тестирование DNS-разрешения
+
+На клиенте попытались выполнить DNS-запрос:
+
+```
+dig @192.168.1.1 client.oskalashnikova.net
+```
+
+**Результат:** Запрос завершился с ошибкой SERVFAIL. Это указывает на проблемы с динамическим обновлением DNS-записей.
+
+![Ошибка DNS-запроса](image/67.png){#fig-044 width=70%}
+
+### Переподключение клиента
+
+Для повторного получения IP-адреса переподключили клиента:
+
+```
+sudo -i
+nmcli connection down eth1
+nmcli connection up eth1
+```
+
+![Переподключение клиента](image/65.png){#fig-045 width=70%}
+
+## Внесение изменений в настройки внутреннего окружения виртуальной машины
+
+### Копирование конфигурационных файлов DHCP
+
+Создали структуру каталогов и скопировали конфигурационные файлы DHCP:
+
+```
+cd /vagrant/provision/server
+mkdir -p /vagrant/provision/server/dhcp/etc/kea
+cp -R /etc/kea/* /vagrant/provision/server/dhcp/etc/kea/
+```
+
+![Копирование конфигурационных файлов DHCP](image/68.png){#fig-046 width=70%}
+
+### Копирование конфигурационных файлов DNS
+
+Скопировали конфигурационные файлы DNS-сервера:
+
+```
+cd /vagrant/provision/server/dns/
+cp -R /var/named/* /vagrant/provision/server/dns/var/named/
+cp -R /etc/named/* /vagrant/provision/server/dns/etc/named/
+```
+
+![Копирование конфигурационных файлов DNS](image/69.png){#fig-047 width=70%}
+
+### Создание скрипта автоматизации
+
+Создали скрипт для автоматической настройки DHCP-сервера:
+
+```
+cd /vagrant/provision/server
+touch dhcp.sh
+chmod +x dhcp.sh
+```
+
+![Создание скрипта dhcp.sh](image/70.png){#fig-048 width=70%}
+
+Содержимое скрипта `dhcp.sh`:
+
+```
+#!/bin/bash
+
+echo "Provisioning script $0"
+
+echo "Install needed packages"
+dnf -y install kea
+
+echo "Copy configuration files"
+cp -R /vagrant/provision/server/dhcp/etc/kea/* /etc/kea/
+
+echo "Fix permissions"
+chown -R kea:kea /etc/kea
+chmod 640 /etc/kea/tsig-keys.json
+
+restorecon -vR /etc
+restorecon -vR /var/lib/kea
+
+echo "Configure firewall"
+firewall-cmd --add-service dhcp
+firewall-cmd --add-service dhcp --permanent
+
+echo "Start dhcpd service"
+systemctl --system daemon-reload
+systemctl enable --now kea-dhcp4.service
+systemctl enable --now kea-dhcp-ddns.service
+```
+
+![Содержимое скрипта dhcp.sh](image/71.png){#fig-049 width=70%}
+
+### Интеграция скрипта в Vagrantfile
+
+Добавили вызов скрипта в конфигурацию Vagrant:
+
+```
+server.vm.provision "server_dhcp",
+  type: "shell",
+  preserve_order: true,
+  path: "provision/server/dhcp.sh"
+```
+
+![Интеграция скрипта в Vagrantfile](image/72.png){#fig-050 width=70%}
 
 # Выводы
 
-Здесь кратко описываются итоги проделанной работы.
-
-# Список литературы{.unnumbered}
-
-::: {#refs}
-:::
+В ходе выполнения лабораторной работы №3 были успешно выполнены основные задачи по настройке DHCP-сервера Kea и интеграции его с DNS через механизм динамического обновления.
