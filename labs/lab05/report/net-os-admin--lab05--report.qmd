@@ -1,67 +1,312 @@
 ---
+# Preamble
+
 ## Author
 author:
-  name: Дмитрий Сергеевич Кулябов
-  degrees: DSc
-  orcid: 0000-0002-0877-7063
-  email: kulyabov-ds@rudn.ru
+  name: Калашникова Ольга Сергеевна
+  email: 1132231846@rudn.ru
   affiliation:
     - name: Российский университет дружбы народов
       country: Российская Федерация
       postal-code: 117198
       city: Москва
       address: ул. Миклухо-Маклая, д. 6
-
 ## Title
-title: "Шаблон отчёта по лабораторной работе"
-subtitle: "Простейший вариант"
+title: "Отчёт по лабораторной работе №5"
+subtitle: "Дисциплина: Администрирование сетевых подсистем"
 license: "CC BY"
+## Generic options
+lang: ru-RU
+number-sections: true
+toc: true
+toc-title: "Содержание"
+toc-depth: 2
+## Crossref customization
+crossref:
+  lof-title: "Список иллюстраций"
+  lot-title: "Список таблиц"
+  lol-title: "Листинги"
+## Bibliography
+bibliography:
+  - bib/cite.bib
+csl: _resources/csl/gost-r-7-0-5-2008-numeric.csl
+## Formats
+format:
+### Pdf output format
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: false
+    toc-depth: 2
+    lof: true # List of figures
+    lot: true # List of tables
+#### Document
+    documentclass: scrreprt
+    papersize: a4
+    fontsize: 12pt
+    linestretch: 1.5
+#### Language
+    babel-lang: russian
+    babel-otherlangs: english
+#### Biblatex
+    cite-method: biblatex
+    biblio-style: gost-numeric
+    biblatexoptions:
+      - backend=biber
+      - langhook=extras
+      - autolang=other*
+#### Misc options
+    csquotes: true
+    indent: true
+    header-includes: |
+      \usepackage{indentfirst}
+      \usepackage{float}
+      \floatplacement{figure}{H}
+      \usepackage[math,RM={Scale=0.94},SS={Scale=0.94},SScon={Scale=0.94},TT={Scale=MatchLowercase,FakeStretch=0.9},DefaultFeatures={Ligatures=Common}]{plex-otf}
+### Docx output format
+  docx:
+    toc: true
+    number-sections: true
+    toc-depth: 2
 ---
 
 # Цель работы
 
-Здесь приводится формулировка цели лабораторной работы.
-Формулировки цели для каждой лабораторной работы приведены в методических указаниях.
-
-Цель данного шаблона --- максимально упростить подготовку отчётов по лабораторным работам.
-Модифицируя данный шаблон, студенты смогут без труда подготовить отчёт по лабораторным работам, а также познакомиться с основными возможностями разметки Markdown.
+Целью данной работы является приобретение практических навыков по расширенному конфигурированию HTTP-сервера Apache в части безопасности и возможности использования PHP.
 
 # Задание
 
-Здесь приводится описание задания в соответствии с рекомендациями методического пособия и выданным вариантом.
-
-# Теоретическое введение
-
-Здесь описываются теоретические аспекты, связанные с выполнением работы.
-
-Например, в [табл. @tbl-std-dir] приведено краткое описание стандартных каталогов Unix.
-
-| Имя каталога | Описание каталога                                                                                                          |
-|--------------|----------------------------------------------------------------------------------------------------------------------------|
-| `/`          | Корневая директория, содержащая всю файловую                                                                               |
-| `/bin `      | Основные системные утилиты, необходимые как в однопользовательском режиме, так и при обычной работе всем пользователям     |
-| `/etc`       | Общесистемные конфигурационные файлы и файлы конфигурации установленных программ                                           |
-| `/home`      | Содержит домашние директории пользователей, которые, в свою очередь, содержат персональные настройки и данные пользователя |
-| `/media`     | Точки монтирования для сменных носителей                                                                                   |
-| `/root`      | Домашняя директория пользователя  `root`                                                                                   |
-| `/tmp`       | Временные файлы                                                                                                            |
-| `/usr`       | Вторичная иерархия для данных пользователя                                                                                 |
-
-: Описание некоторых каталогов файловой системы GNU Linux {#tbl-std-dir}
-
-Более подробно про Unix см. в [@tanenbaum_book_modern-os_ru; @robbins_book_bash_en; @zarrelli_book_mastering-bash_en; @newham_book_learning-bash_en].
+1. Сгенерировать криптографический ключ и самоподписанный сертификат безопасности для возможности перехода веб-сервера от работы через протокол HTTP к работе через протокол HTTPS.
+2. Настроить веб-сервер для работы с PHP.
+3. Написать (или скорректировать) скрипт для Vagrant, фиксирующий действия по расширенной настройке HTTP-сервера во внутреннем окружении виртуальной машины server.
 
 # Выполнение лабораторной работы
 
-Описываются проведённые действия, в качестве иллюстрации даётся ссылка на иллюстрацию ([рис. @fig-001]).
+## Конфигурирование HTTP-сервера для работы через протокол HTTPS
 
-![V Сольвеевский конгресс (1927) «Электроны и фотоны»](image/solvay.jpg){#fig-001 width=70%}
+Загрузили операционную систему и перешли в рабочий каталог с проектом: `cd /var/tmp/oskalashnikova/vagrant`.
 
-# Выводы
+Запустили виртуальную машину server: `make server-up`.
 
-Здесь кратко описываются итоги проделанной работы.
+Далее на виртуальной машине server вошли под созданным нами в предыдущей работе пользователем `oskalashnikova` и открыли терминал. Перешли в режим суперпользователя: `sudo -i` ([рис. @fig-001]).
 
-# Список литературы{.unnumbered}
+![Переход в режим суперпользователя](image/1.png){#fig-001 width=70%}
 
-::: {#refs}
-:::
+В каталоге `/etc/ssl` создали каталог `private` ([рис. @fig-002]):
+
+```bash
+mkdir -p /etc/pki/tls/private
+ln -s /etc/pki/tls/private /etc/ssl/private
+cd /etc/pki/tls/private
+```
+
+![Создание каталога private](image/2.png){#fig-002 width=70%}
+
+Далее сгенерировали ключ и сертификат, используя команду ([рис. @fig-003]):
+
+```bash
+openssl req -x509 -nodes -newkey rsa:2048 -keyout www.oskalashnikova.net.key -out www.oskalashnikova.net.crt
+mv www.oskalashnikova.net.crt /etc/pki/tls/certs
+```
+
+И заполнили сертификат:
+
+- в строке кода страны указали RU;
+- в строке названия страны указали Russia;
+- в строке названия города указали Moscow;
+- в строке названия организации указали свой логин — oskalashnikova;
+- в строке названия подразделения указали свой логин — oskalashnikova;
+- в строке названия хоста указали доменное имя веб-сервера `www.oskalashnikova.net`;
+- в строке e-mail адреса указали `oskalashnikova@oskalashnikova.net`.
+
+![Генерация ключа и сертификата](image/3.png){#fig-003 width=70%}
+
+Для перехода веб-сервера `www.oskalashnikova.net` на функционирование через протокол HTTPS требуется изменить его конфигурационный файл. Перешли в каталог с конфигурационными файлами: `cd /etc/httpd/conf.d`.
+
+Открыли на редактирование файл `/etc/httpd/conf.d/www.oskalashnikova.net.conf` и заменили его содержимое на следующее ([рис. @fig-004]):
+
+```apache
+<VirtualHost *:80>
+    ServerAdmin webmaster@oskalashnikova.net
+    DocumentRoot /var/www/html/www.oskalashnikova.net
+    ServerName www.oskalashnikova.net
+    ServerAlias www.oskalashnikova.net
+    ErrorLog logs/www.oskalashnikova.net-error_log
+    CustomLog logs/www.oskalashnikova.net-access_log common
+    RewriteEngine on
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}$1 [R=301,L]
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+<VirtualHost *:443>
+    SSLEngine on
+    ServerAdmin webmaster@oskalashnikova.net
+    DocumentRoot /var/www/html/www.oskalashnikova.net
+    ServerName www.oskalashnikova.net
+    ServerAlias www.oskalashnikova.net
+    ErrorLog logs/www.oskalashnikova.net-error_log
+    CustomLog logs/www.oskalashnikova.net-access_log common
+    SSLCertificateFile /etc/ssl/certs/www.oskalashnikova.net.crt
+    SSLCertificateKeyFile /etc/ssl/private/www.oskalashnikova.net.key
+</VirtualHost>
+</IfModule>
+```
+
+**Пояснение к содержанию файла:**
+- Секция `<VirtualHost *:80>`:
+  - Обрабатывает HTTP-запросы на порту 80.
+  - Сервер администратора: `webmaster@oskalashnikova.net`
+  - Корневая директория: `/var/www/html/www.oskalashnikova.net`
+  - Имя сервера и псевдоним: `www.oskalashnikova.net`
+  - Настройки логов ошибок и доступа
+  - Правило перенаправления всех HTTP-запросов на HTTPS (код 301 - постоянное перенаправление)
+- Секция `<VirtualHost *:443>`:
+  - Обрабатывает HTTPS-запросы на порту 443
+  - Включает SSL/TLS движок (`SSLEngine on`)
+  - Указывает пути к SSL-сертификату и закрытому ключу
+- Файл обеспечивает принудительное использование HTTPS и настройку SSL для домена.
+
+![Конфигурационный файл www.oskalashnikova.net.conf](image/4.png){#fig-004 width=70%}
+
+Далее внесли изменения в настройки межсетевого экрана на сервере, разрешив работу с HTTPS ([рис. @fig-005]):
+
+```bash
+firewall-cmd --list-services
+firewall-cmd --get-services
+firewall-cmd --add-service=https
+firewall-cmd --add-service=https --permanent
+firewall-cmd --reload
+```
+
+![Настройка firewall для HTTPS](image/5.png){#fig-005 width=70%}
+
+Перезапустили веб-сервер: `systemctl restart httpd` ([рис. @fig-006]).
+
+![Перезапуск httpd](image/6.png){#fig-006 width=70%}
+
+После этого на виртуальной машине client в строке браузера ввели название веб-сервера `www.oskalashnikova.net` и убедились, что произошло автоматическое переключение на работу по протоколу HTTPS. На открывшейся странице с сообщением о незащищённости соединения нажали кнопку «Дополнительно», затем добавили адрес сервера в постоянные исключения ([рис. @fig-007]).
+
+![Добавление адреса в исключения](image/7.png){#fig-007 width=70%}
+
+Затем просмотрели содержание сертификата (нажали на значок с замком в адресной строке и кнопку «Подробнее») ([рис. @fig-008]).
+
+![Просмотр сертификата](image/8.png){#fig-008 width=70%}
+
+## Конфигурирование HTTP-сервера для работы с PHP
+
+Установили пакеты для работы с PHP: `dnf -y install php` ([рис. @fig-009]).
+
+![Установка PHP](image/9.png){#fig-009 width=70%}
+
+В каталоге `/var/www/html/www.oskalashnikova.net` заменили файл `index.html` на `index.php`
+
+```bash
+mv index.html index.php
+```
+
+Отредактировали файл `index.php`, добавив в него следующий код ([рис. @fig-010]):
+
+```php
+<?php
+phpinfo();
+?>
+```
+
+![Редактирование index.php](image/10.png){#fig-010 width=70%}
+
+Скорректировали права доступа в каталог с веб-контентом: `chown -R apache:apache /var/www` ([рис. @fig-011]).
+
+![Изменение прав доступа](image/11.png){#fig-011 width=70%}
+
+Восстановили контекст безопасности в SELinux ([рис. @fig-012]):
+
+```bash
+restorecon -vR /etc
+restorecon -vR /var/www
+```
+
+![Восстановление контекста SELinux](image/12.png){#fig-012 width=70%}
+
+Перезапустили HTTP-сервер: `systemctl restart httpd`. ([рис. @fig-013])
+
+![Перезапуск HTTP-сервер](image/13.png){#fig-013 width=70%}
+
+На виртуальной машине client в строке браузера ввели название веб-сервера `www.oskalashnikova.net` и убедились, что была выведена страница с информацией об используемой на веб-сервере версии PHP ([рис. @fig-014]).
+
+![Страница phpinfo()](image/14.png){#fig-014 width=70%}
+
+## Внесение изменений в настройки внутреннего окружения виртуальной машины
+
+На виртуальной машине server перешли в каталог для внесения изменений в настройки внутреннего окружения `/vagrant/provision/server/http` и в соответствующие каталоги скопировали конфигурационные файлы ([рис. @fig-015]):
+
+```bash
+cp -R /etc/httpd/conf.d/* /vagrant/provision/server/http/etc/httpd/conf.d
+cp -R /var/www/html/* /vagrant/provision/server/http/var/www/html
+mkdir -p /vagrant/provision/server/http/etc/pki/tls/private
+mkdir -p /vagrant/provision/server/http/etc/pki/tls/certs
+cp -R /etc/pki/tls/private/www.oskalashnikova.net.key /vagrant/provision/server/http/etc/pki/tls/private
+cp -R /etc/pki/tls/certs/www.oskalashnikova.net.crt /vagrant/provision/server/http/etc/pki/tls/certs
+```
+
+![Копирование конфигурационных файлов](image/15.png){#fig-015 width=70%}
+
+В имеющийся скрипт `/vagrant/provision/server/http.sh` внесли изменения, добавив установку PHP и настройку межсетевого экрана, разрешающую работать с HTTPS ([рис. @fig-016]):
+
+```bash
+#!/bin/bash
+
+echo "Provisioning script $0"
+
+echo "Install needed packages"
+dnf -y groupinstall "Basic Web Server"
+
+echo "Install PHP"
+dnf -y install php php-cli php-common
+
+echo "Copy configuration files"
+cp -R /vagrant/provision/server/http/etc/httpd/* /etc/httpd
+cp -R /vagrant/provision/server/http/var/www/* /var/www
+
+chown -R apache:apache /var/www
+
+restorecon -vR /etc
+restorecon -vR /var/www
+
+echo "Configure firewall"
+firewall-cmd --add-service=http
+firewall-cmd --add-service=http --permanent
+
+firewall-cmd --add-service=https
+firewall-cmd --add-service=https --permanent
+
+echo "Start http service"
+systemctl enable httpd
+systemctl start httpd
+```
+
+![Скрипт http.sh](image/16.png){#fig-016 width=70%}
+
+## Контрольные вопросы
+
+1. **В чём отличие HTTP от HTTPS?**  
+   HTTP передаёт данные в открытом виде, HTTPS использует шифрование (SSL/TLS) для защиты данных. HTTPS обеспечивает конфиденциальность, целостность данных и аутентификацию сервера.
+
+2. **Каким образом обеспечивается безопасность контента веб-сервера при работе через HTTPS?**  
+   Безопасность обеспечивается за счёт:
+   - Шифрования передаваемых данных с помощью SSL/TLS протоколов
+   - Аутентификации сервера с помощью цифровых сертификатов
+   - Обеспечения целостности данных через криптографические хэши
+   - Защиты от атак "человек посередине"
+
+3. **Что такое сертификационный центр? Приведите пример.**  
+   Сертификационный центр (Certificate Authority, CA) — это доверенная организация, которая выпускает цифровые сертификаты, подтверждающие подлинность владельца и принадлежность открытого ключа. Примеры: Let's Encrypt, DigiCert, GlobalSign, Comodo.
+
+## Выводы
+
+В ходе выполнения лабораторной работы №5 были приобретены практические навыки по расширенному конфигурированию HTTP-сервера Apache. Были выполнены следующие задачи:
+
+1. Сгенерирован самоподписанный SSL-сертификат и настроен переход веб-сервера на HTTPS с использованием модуля `mod_ssl`.
+2. Установлен и настроен PHP для работы с Apache, создан тестовый скрипт `phpinfo()` для проверки работоспособности.
+3. Скорректирован скрипт Vagrant для автоматизации настройки внутреннего окружения виртуальной машины, включая установку PHP и настройку межсетевого экрана.
+
+В результате веб-сервер успешно работает по защищённому протоколу HTTPS, автоматически перенаправляя HTTP-запросы на HTTPS-версию, и способен обрабатывать PHP-скрипты. Были освоены навыки работы с OpenSSL для генерации самоподписанных сертификатов, настройки виртуальных хостов Apache для работы с SSL/TLS, а также управления настройками брандмауэра и SELinux.
