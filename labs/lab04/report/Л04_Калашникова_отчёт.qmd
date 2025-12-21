@@ -1,0 +1,353 @@
+---
+# Preamble
+
+## Author
+author:
+  name: Калашникова Ольга Сергеевна
+  degrees: DSc
+  orcid: 0000-0002-0877-7063
+  email: kulyabov-ds@rudn.ru
+  affiliation:
+    - name: Российский университет дружбы народов
+      country: Российская Федерация
+      postal-code: 117198
+      city: Москва
+      address: ул. Миклухо-Маклая, д. 6
+## Title
+title: "Отчёт по лабораторной работе №4"
+subtitle: "Дисциплина: Администрирование сетевых подсистем"
+license: "CC BY"
+## Generic options
+lang: ru-RU
+number-sections: true
+toc: true
+toc-title: "Содержание"
+toc-depth: 2
+## Crossref customization
+crossref:
+  lof-title: "Список иллюстраций"
+  lot-title: "Список таблиц"
+  lol-title: "Листинги"
+## Bibliography
+bibliography:
+  - bib/cite.bib
+csl: _resources/csl/gost-r-7-0-5-2008-numeric.csl
+## Formats
+format:
+### Pdf output format
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: false
+    toc-depth: 2
+    lof: true # List of figures
+    lot: true # List of tables
+#### Document
+    documentclass: scrreprt
+    papersize: a4
+    fontsize: 12pt
+    linestretch: 1.5
+#### Language
+    babel-lang: russian
+    babel-otherlangs: english
+#### Biblatex
+    cite-method: biblatex
+    biblio-style: gost-numeric
+    biblatexoptions:
+      - backend=biber
+      - langhook=extras
+      - autolang=other*
+#### Misc options
+    csquotes: true
+    indent: true
+    header-includes: |
+      \usepackage{indentfirst}
+      \usepackage{float}
+      \floatplacement{figure}{H}
+      \usepackage[math,RM={Scale=0.94},SS={Scale=0.94},SScon={Scale=0.94},TT={Scale=MatchLowercase,FakeStretch=0.9},DefaultFeatures={Ligatures=Common}]{plex-otf}
+### Docx output format
+  docx:
+    toc: true
+    number-sections: true
+    toc-depth: 2
+---
+
+# Цель работы
+
+Целью данной работы является приобретение практических навыков по установке и базовому конфигурированию HTTP-сервера Apache.
+
+# Задание
+
+1. Установить необходимые для работы HTTP-сервера пакеты
+2. Запустить HTTP-сервер с базовой конфигурацией и проанализируйте его работу
+3. Настроить виртуальный хостинг
+4. Написать скрипт для Vagrant, фиксирующий действия по установке и настройке HTTP-сервера во внутреннем окружении виртуальной машины server. Соответствующим образом внести изменения в Vagrantfile
+
+# Выполнение лабораторной работы
+
+## Установка HTTP-сервера
+
+На виртуальной машине server установили из репозитория стандартный веб-сервер (HTTP-сервер и утилиты httpd, криптоутилиты и пр.): ```LANG=C yum grouplist``` и ```dnf -y groupinstall "Basic Web Server"``` ([рис. @fig-001]), ([рис. @fig-002])
+
+![Установка веб-сервера (1)](image/1.png){#fig-001 width=70%}
+
+![Установка веб-сервера (2)](image/2.png){#fig-002 width=70%}
+
+## Базовое конфигурирование HTTP-сервера
+
+Внесли изменения я в настройки межсетевого экрана узла server, разрешив работу с http с помощью ([рис. @fig-003]):
+
+```firewall-cmd --list-services```
+
+```firewall-cmd --get-services```
+
+```firewall-cmd --add-service=http```
+
+```firewall-cmd --add-service=http --permanent```
+
+![Внесение изменений в настройки межсетевого экрана узла server, разрешив работу с http](image/3.png){#fig-003 width=70%}
+
+Далее посмотрели расширенный лог системных сообщений во втором терминале и убедились что веб-сервер успешно запустился: ```journalctl -x -f``` ([рис. @fig-004])
+
+![Лог системных сообщений](image/4.png){#fig-004 width=70%}
+
+## Анализ работы HTTP-сервера
+
+На виртуальной машине server посмотрели лог ошибок работы веб-сервера: ```tail -f /var/log/httpd/error_log``` ([рис. @fig-005])
+
+![Лог ошибок работы веб-сервера](image/5.png){#fig-005 width=70%}
+
+После на виртуальной машине server запустили мониторинг доступа к веб-серверу: ```tail -f /var/log/httpd/access_log```. На виртуальной машине client запустили браузер и в адресной строке ввели
+```192.168.1.1```. ([рис. @fig-006]), ([рис. @fig-007])
+
+![Работа в браузере на виртуальной машине client](image/6.png){#fig-006 width=70%}
+
+![Мониторинг доступа к веб-серверу](image/7.png){#fig-007 width=70%}
+
+В логе видно, что клиент с IP 192.168.1.33 обращается к веб-серверу.
+
+## Настройка виртуального хостинга для HTTP-сервера
+
+Требуется настроить виртуальный хостинг по двум DNS-адресам: *server.oskalashnikova.net* и *www.oskalashnikova.net*
+
+Остановили работу DNS-сервера для внесения изменений в файлы описания DNSзон: ```systemctl stop named``` ([рис. @fig-008])
+
+![Остановка работы DNS-сервера](image/8.png){#fig-008 width=70%}
+
+Далее добавили запись для HTTP-сервера в конце файла прямой DNS-зоны */var/named/master/fz/oskalashnikova.net*: ```www A 192.168.1.1``` ([рис. @fig-016])
+
+![Редактирование файла прямой DNS-зоны](image/9.png){#fig-009 width=70%}
+
+И в конце файла обратной зоны */var/named/master/rz/192.168.1* добавили: ```1 PTR www.oskalashnikova.net.``` ([рис. @fig-017])
+
+![Редактирование файла обратной DNS-зоны](image/10.png){#fig-010 width=70%}
+
+Далее перезапустили DNS-сервер: ```systemctl start named``` ([рис. @fig-011])
+
+![Перезапуск DNS-сервера](image/11.png){#fig-011 width=70%}
+
+В каталоге */etc/httpd/conf.d* создали файлы *server.oskalashnikova.net.conf* и *www.oskalashnikova.net.conf* ([рис. @fig-012]):
+
+```cd /etc/httpd/conf.d```
+
+```touch server.oskalashnikova.net.conf```
+
+```touch www.oskalashnikova.net.conf``` 
+
+![Создание файлов server.oskalashnikova.net.conf и www.oskalashnikova.net.conf](image/12.png){#fig-012 width=70%}
+
+В файл *server.oskalashnikova.net.conf* внесли слеуюущее содержание ([рис. @fig-013]):
+
+```
+<VirtualHost *:80>
+	ServerAdmin webmaster@oskalashnikova.net
+	DocumentRoot /var/www/html/server.oskalashnikova.net
+	ServerName server.oskalashnikova.net
+	ErrorLog logs/server.oskalashnikova.net-error_log
+	CustomLog logs/server.oskalashnikova.net-access_log common
+</VirtualHost>
+```
+
+![Редактирование файла server.oskalashnikova.net.conf](image/14.png){#fig-013 width=70%}
+
+В файл *www.oskalashnikova.net.conf* внесли слеуюущее содержание ([рис. @fig-014]):
+
+```
+<VirtualHost *:80>
+	ServerAdmin webmaster@oskalashnikova.net
+	DocumentRoot /var/www/html/www.oskalashnikova.net
+	ServerName www.oskalashnikova.net
+	ErrorLog logs/www.oskalashnikova.net-error_log
+	CustomLog logs/www.oskalashnikova.net-access_log common
+</VirtualHost>
+```
+
+![Редактирование файла www.oskalashnikova.net.conf](image/15.png){#fig-014 width=70%}
+
+Далее перешли в каталог */var/www/html*, в котором должны находиться файлы с содержимым (контентом) веб-серверов, и создали тестовые страницы для виртуальных веб-серверов *server.oskalashnikova.net* и *www.oskalashnikova.net*
+
+Для виртуального веб-сервера *server.oskalashnikova.net* ([рис. @fig-015]):
+
+```cd /var/www/html```
+
+```mkdir server.oskalashnikova.net```
+
+```cd /var/www/html/server.oskalashnikova.net```
+
+```touch index.html```
+
+![Создание тестовой страницы для виртуального веб-сервера server.oskalashnikova.net](image/16.png){#fig-015 width=70%}
+
+В файл *index.html* внесли следующее содержание ([рис. @fig-016]):
+
+```Welcome to the server.oskalashnikova.net server.```
+
+![Редактирование index.html для server.oskalashnikova.net](image/20.png){#fig-016 width=70%}
+
+Для виртуального веб-сервера *www.oskalashnikova.net* ([рис. @fig-017]):
+
+```cd /var/www/html```
+
+```mkdir www.oskalashnikova.net```
+
+```cd /var/www/html/www.oskalashnikova.net```
+
+```touch index.html```
+
+![Создание тестовой страницы для виртуального веб-сервера www.oskalashnikova.net](image/18.png){#fig-017 width=70%}
+
+В файл *index.html* внесли следующее содержание ([рис. @fig-018]):
+
+```Welcome to the www.oskalashnikova.net server.```
+
+![Редактирование index.html для www.oskalashnikova.net](image/19.png){#fig-018 width=70%}
+
+Далее скорректировали права доступа в каталог с веб-контентом: ```chown -R apache:apache /var/www``` ([рис. @fig-019])
+
+![Изменение прав доступа для каталога с веб-контентом](image/21.png){#fig-019 width=70%}
+
+Восстановили контекст безопасности в SELinux ([рис. @fig-028]):
+
+```restorecon -vR /etc```
+
+```restorecon -vR /var/named```
+
+```restorecon -vR /var/www```
+
+![Восстановление контекста безопасности в SELinux](image/22.png){#fig-020 width=70%}
+
+После перезапустили HTTP-сервер: ```systemctl restart httpd``` ([рис. @fig-021])
+
+![Перезапуск HTTP-сервера](image/23.png){#fig-021 width=70%}
+
+На виртуальной машине client убедились в корректном доступе к веб-серверу по адресам *server.oskalashnikova.net* и *www.oskalashnikova.net* ([рис. @fig-022]), ([рис. @fig-023])
+
+![Доступ к веб-серверу по адресу server.oskalashnikova.net](image/32.png){#fig-022 width=70%}
+
+![Доступ к веб-серверу по адресу www.oskalashnikova.net](image/33.png){#fig-023 width=70%}
+
+## Внесение изменений в настройки внутреннего окружения виртуальной машины
+
+На виртуальной машине server перешли в каталог для внесения изменений в настройки внутреннего окружения */vagrant/provision/server/*, создали в нём каталог *http*, в который поместили в соответствующие подкаталоги конфигурационные файлы HTTP-сервера ([рис. @fig-024]):
+
+```cd /vagrant/provision/server```
+
+```mkdir -p /vagrant/provision/server/http/etc/httpd/conf.d```
+
+```mkdir -p /vagrant/provision/server/http/var/www/html```
+
+```cp -R /etc/httpd/conf.d/* /vagrant/provision/server/http/etc/httpd/conf.d/```
+
+```cp -R /var/www/html/* /vagrant/provision/server/http/var/www/html```
+
+![Создание каталога http и копирование конфигурационных файлов](image/34.png){#fig-024 width=70%}
+
+Затем заменили конфигурационные файлы DNS-сервера ([рис. @fig-025]):
+
+```cd /vagrant/provision/server/dns/```
+
+```cp -R /var/named/* /vagrant/provision/server/dns/var/named/```
+
+![Замена конфигурационных файлов DNS-сервера](image/35.png){#fig-025 width=70%}
+
+Далее в каталоге */vagrant/provision/server* создайте исполняемый файл *http.sh* ([рис. @fig-026]):
+
+```cd /vagrant/provision/server```
+
+```touch http.sh```
+
+```chmod +x http.sh```
+
+![Создание исполняемого файла http.sh](image/36.png){#fig-026 width=70%}
+
+В файле *http.sh* пропишем следующий скрипт ([рис. @fig-027]): 
+
+```
+#!/bin/bash
+echo "Provisioning script $0"
+echo "Install needed packages"
+dnf -y groupinstall "Basic Web Server"
+echo "Copy configuration files"
+cp -R /vagrant/provision/server/http/etc/httpd/* /etc/httpd
+cp -R /vagrant/provision/server/http/var/www/* /var/www
+chown -R apache:apache /var/www
+restorecon -vR /etc
+restorecon -vR /var/www
+echo "Configure firewall"
+firewall-cmd --add-service=http
+firewall-cmd --add-service=http --permanent
+echo "Start http service"
+systemctl enable httpd
+systemctl start httpd
+```
+
+![Редактирование файла http.sh](image/38.png){#fig-027 width=70%}
+
+Этот скрипт, повторяет произведённые действия по установке и настройке HTTP-сервера
+
+Для отработки созданного скрипта во время загрузки виртуальных машин в конфигурационном файле *Vagrantfile* необходимо добавить в конфигурации сервера следующую запись ([рис. @fig-028]):
+
+```
+server.vm.provision "server http",
+type: "shell",
+preserve_order: true,
+path: "provision/server/http.sh"
+```
+
+![Редактирование файла Vagrantfile](image/39.png){#fig-028 width=70%}
+
+## Контрольные вопросы + ответы
+
+1. Через какой порт по умолчанию работает Apache?
+
+По умолчанию, Apache работает через порт 80 для HTTP и порт 443 для HTTPS.
+
+2. Под каким пользователем запускается Apache и к какой группе относится этот пользователь?
+
+Apache обычно запускается от имени пользователя www-data (или apache, в зависимости от дистрибутива) и относится к группе с тем же именем.
+
+3. Где располагаются лог-файлы веб-сервера? Что можно по ним отслеживать?
+
+ Лог-файлы веб-сервера обычно располагаются в директории логов. Например, в Ubuntu логи Apache хранятся в /var/log/apache2/, а в CentOS - в /etc/httpd/logs/. Лог-файлы содержат информацию о запросах к серверу, ошибки, статусы запросов и другие события, что позволяет администраторам отслеживать активность и выявлять проблемы.
+
+4. Где по умолчанию содержится контент веб-серверов?
+
+Контент веб-серверов по умолчанию обычно находится в директории, называемой "DocumentRoot". Например, в Apache на Linux DocumentRoot по умолчанию установлен в /var/www/html/. В этой директории содержатся файлы, которые веб-сервер отдает при запросах.
+
+5. Каким образом реализуется виртуальный хостинг? Что он даёт?
+
+Виртуальный хостинг в Apache позволяет хостить несколько сайтов на одном сервере. Это можно сделать двумя способами:
+
+Базовый виртуальный хостинг: Разные сайты обслуживаются на одном сервере с использованием разных директорий DocumentRoot.
+
+Name-based (или Host-based) виртуальный хостинг: Разные сайты обслуживаются на одном IP-адресе, но на разных доменных именах. Это основывается на значении заголовка "Host" в HTTP-запросе, который используется для определения, какой виртуальный хост должен обработать запрос.
+
+Виртуальный хостинг позволяет хозяину сервера размещать несколько сайтов на одном физическом сервере, управлять ими независимо, и предоставлять услуги хостинга для различных клиентов или проектов.
+
+# Выводы
+
+В ходе выполнения лабораторной работы №4 мы приобрели практические навыки в по установке и базовому конфигурированию HTTP-сервера Apache.
+
+# Список литературы
+
+1. [Лаборатораня работа №4](https://esystem.rudn.ru/pluginfile.php/2854744/mod_resource/content/6/004-http.pdf)
