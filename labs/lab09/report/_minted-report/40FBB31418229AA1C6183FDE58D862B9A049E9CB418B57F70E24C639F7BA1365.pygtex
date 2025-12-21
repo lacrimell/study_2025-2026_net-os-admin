@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{+w}{  }\PYG{n+nb}{cd}\PYG{+w}{ }/vagrant/provision/server
+\PYG{+w}{  }mkdir\PYG{+w}{ }\PYGZhy{}p\PYG{+w}{ }/vagrant/provision/server/mail/etc/dovecot/conf.d
+\PYG{+w}{  }cp\PYG{+w}{ }\PYGZhy{}R\PYG{+w}{ }/etc/dovecot/dovecot.conf\PYG{+w}{ }/vagrant/provision/server/mail/etc/dovecot/
+\PYG{+w}{  }cp\PYG{+w}{ }\PYGZhy{}R\PYG{+w}{ }/etc/dovecot/conf.d/10\PYGZhy{}auth.conf\PYG{+w}{ }/vagrant/provision/server/mail/etc/dovecot/conf.d/
+\PYG{+w}{  }cp\PYG{+w}{ }\PYGZhy{}R\PYG{+w}{ }/etc/dovecot/conf.d/auth\PYGZhy{}system.conf.ext\PYG{+w}{ }/vagrant/provision/server/mail/etc/dovecot/conf.d/
+\PYG{+w}{  }cp\PYG{+w}{ }\PYGZhy{}R\PYG{+w}{ }/etc/dovecot/conf.d/10\PYGZhy{}mail.conf\PYG{+w}{ }/vagrant/provision/server/mail/etc/dovecot/conf.d/
+\end{Verbatim}

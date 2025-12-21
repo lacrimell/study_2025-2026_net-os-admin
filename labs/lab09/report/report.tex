@@ -1,0 +1,363 @@
+\input{preamble.tex}
+
+\title{Отчет по лабораторной работе № 9. \\Настройка POP3/IMAP сервера}
+\author{Калашникова Ольга \\ НПИбд-01-23}
+\date{2025}
+
+\begin{document}
+\maketitle
+\newpage
+
+\tableofcontents
+
+\newpage
+\section{Цель работы}
+Приобретение практических навыков по установке и простейшему конфигурированию POP3/IMAP-сервера.
+\newpage
+\section{Выполнение работы}
+
+\subsection{Установка Dovecot}
+\begin{enumerate}
+\item На виртуальной машине \texttt{server} вошли под пользователем и открыли терминал. Перешли в режим суперпользователя:
+  \begin{minted}{bash}
+    sudo -i
+  \end{minted}
+\item Установили необходимые для работы пакеты(Рис. \ref{01}):
+  \begin{minted}{bash}
+    dnf -y install dovecot telnet
+  \end{minted}
+  \begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/1.png}
+    \captionof{figure}{Успешная установка Dovecot.}
+    \label{01}
+\end{center}
+\end{enumerate}
+
+\subsection{Настройка dovecot}
+\begin{enumerate}
+\item В конфигурационном файле \texttt{/etc/dovecot/dovecot.conf} пропишем список почтовых протоколов, с которыми разрешено работать Dovecot (Рис. \ref{02}):
+  \begin{minted}{bash}
+    protocols = imap pop3
+  \end{minted}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/2.png}
+    \captionof{figure}{Разрешенные почтовые протоколы в конфигурации Dovecot.}
+    \label{02}
+\end{center}
+
+\item В конфигурационном файле \texttt{/etc/dovecot/conf.d/10-auth.conf} проверим, что указали(или уже указан) метод аутентификации \texttt{plain} (Рис. \ref{03}):
+\begin{minted}{bash}
+  auth_mechanisms = plain
+\end{minted}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/3.png}
+    \captionof{figure}{Указание метода аутентификации \texttt{plain}.}
+    \label{03}
+\end{center}
+
+\item В конфигурационном файле 
+\texttt{/etc/dovecot/conf.d/auth-system.conf.ext} проверим, используется ли для поиска пользователей и их паролей \texttt{pam} и файл \texttt{passwd} (Рис. \ref{04}):
+  \begin{minted}{bash}
+    passdb {
+      driver = pam
+    }
+    userdb {
+      driver = passwd
+    }
+  \end{minted}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/4.png}
+    \captionof{figure}{Использование файла \texttt{passwd} и \texttt{pam} для поиска паролей.}
+    \label{04}
+\end{center}
+
+\item В конфигурационном файле \texttt{/etc/dovecot/conf.d/10-mail.conf} настроим расположение почтовых ящиков пользователей (Рис. \ref{05}):
+  \begin{minted}{bash}
+    mail_location = maildir:~/Maildir
+  \end{minted}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/5.png}
+    \captionof{figure}{Настройка месторасположения почтовых ящиков пользователей.}
+    \label{05}
+\end{center}
+
+\item В Postfix зададим каталог для доставки почты(Рис. \ref{06}):
+  \begin{minted}{bash}
+    postconf -e 'home_mailbox = Maildir/'
+  \end{minted}
+  \begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/6.png}
+    \captionof{figure}{Создание каталога для доставки почты.}
+    \label{06}
+\end{center}
+\item Сконфигурируем межсетевой экран, разрешим работать службам протоколов POP3 и IMAP (Рис. \ref{07}):
+  \begin{minted}{bash}
+    firewall-cmd --get-services
+    firewall-cmd --add-service=pop3 --permanent
+    firewall-cmd --add-service=pop3s --permanent
+    firewall-cmd --add-service=imap --permanent
+    firewall-cmd --add-service=imaps --permanent
+    firewall-cmd --reload
+    firewall-cmd --list-services
+  \end{minted}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/7.png}
+    \captionof{figure}{Настройка межсетевого экрана для работы служб протоколов POP3 и IMAP.}
+    \label{07}
+\end{center}
+
+\item Восстановим контекст безопасности в SELinux (Рис. \ref{08}):
+  \begin{minted}{bash}
+    restorecon -vR /etc
+  \end{minted}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/8.png}
+    \captionof{figure}{Восстановление контекста безопасности в SELinux.}
+    \label{08}
+\end{center}
+
+\item Перезапустим Postfix и запустим Dovecot (Рис. \ref{09}):
+  \begin{minted}{bash}
+    systemctl restart postfix
+    systemctl enable dovecot
+    systemctl start dovecot
+  \end{minted}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/9.png}
+    \captionof{figure}{Перезапуск Postfix и Dovecot.}
+    \label{09}
+\end{center}
+
+\end{enumerate}
+
+
+\subsection{Проверка работы Dovecot}
+\begin{enumerate}
+\item На дополнительном терминале виртуальной машины \texttt{server} запустим мониторинг работы почтовой службы (Рис. \ref{10}):
+\begin{minted}{bash}
+  tail -f /var/log/maillog
+\end{minted}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/10.png}
+    \captionof{figure}{Запуск мониторинга работы почтовой службы.}
+    \label{10}
+\end{center}
+
+\item На терминале сервера для просмотра имеющейся почты используем команду  (Рис. \ref{11})
+  \begin{minted}{bash}
+    MAIL=~/Maildir mail
+  \end{minted}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/11.png}
+    \captionof{figure}{Просмотр имеющейся почты на сервере.}
+    \label{11}
+\end{center}
+
+\item Для просмотра \texttt{mailbox} пользователя на сервере на терминале с правами суперпользователя используем (Рис. \ref{12})
+  \begin{minted}{bash}
+    doveadm mailbox list -u oskalashnikova
+  \end{minted}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/12.png}
+    \captionof{figure}{Просмотр нашей почты пользователя \texttt{oskalashnikova}.}
+    \label{12}
+\end{center}
+
+\item На виртуальной машине \texttt{client} войдём под пользователем и откроем терминал. Перейдём в режим суперпользователя (Рис. \ref{13}):
+  \begin{minted}{bash}
+    sudo -i
+  \end{minted}
+    \begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/13.png}
+    \captionof{figure}{Переход в режим суперпользователя на виртуальной машине \texttt{client}.}
+    \label{13}
+\end{center}
+
+\item Установим почтовый клиент(Рис. \ref{14})
+  \begin{minted}{bash}
+    dnf -y install evolution
+  \end{minted}
+  \begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/14.png}
+    \captionof{figure}{Успешная установка evolution.}
+    \label{14}
+\end{center}
+
+\item Запустим и настроим почтовый клиент Evolution (Рис. \ref{15} - \ref{19}):
+  \begin{itemize}
+  \item в окне настройки учётной записи почты укажем имя, адрес почты в виде \break \texttt{oskalashnikova@oskalashnikova.net}, введём пароль пользователя, нажмём <<Продолжить>>, затем <<Настроить вручную>>;
+  \item в качестве IMAP-сервера для входящих сообщений и SMTP-сервера для исходящих сообщений пропишем наш почтовый адрес \texttt{mail.oskalashnikova.net}, в качестве пользователя для входящих и исходящих сообщений указали \texttt{oskalashnikova};
+  \item проверим номера портов: для IMAP — порт 143, для SMTP — порт 25;
+  \item проверим настройки SSL и метода аутентификации: для IMAP — STARTTLS, аутентификация по обычному паролю, для SMTP — без аутентификации, аутентификация — <<Без аутентификации>>;
+  
+\end{itemize}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/15.png}
+    \captionof{figure}{Встречающий экран Evolution.}
+    \label{15}
+\end{center}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/16.png}
+    \captionof{figure}{Настройка учётной записи (имя пользователя).}
+    \label{16}
+\end{center}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/17.png}
+    \captionof{figure}{Настройка IMAP-сервера.}
+    \label{17}
+\end{center}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/18.png}
+    \captionof{figure}{Настройка SMTP-сервера.}
+    \label{17}
+\end{center}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/19.png}
+    \captionof{figure}{Проверка заданных настроек.}
+    \label{17}
+\end{center}
+
+\item Из почтового клиента отправим себе несколько тестовое письмо и убедилимся, что они доставлены  (Рис. \ref{20} - \ref{26}).
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/20.png}
+    \captionof{figure}{Окно отправки письма.}
+    \label{20}
+\end{center}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/21.png}
+    \captionof{figure}{Сообщение о том, что письмо сохранено.}
+    \label{21}
+\end{center}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/22.png}
+    \captionof{figure}{Окно предупреждения о ненадёжном SSL/TLS-сертификате для почтового сервера.}
+    \label{22}
+\end{center}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/23.png}
+    \captionof{figure}{Запрос аутентификации для почтового аккаунта \texttt{oskalashnikova@oskalashnikova.net.}}
+    \label{23}
+\end{center}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/24.png}
+    \captionof{figure}{Отправка ещё одного письма.}
+    \label{24}
+\end{center}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/25.png}
+    \captionof{figure}{Успешная доставка в наш почтовый ящик.}
+    \label{25}
+\end{center}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/26.png}
+    \captionof{figure}{Содержание сообщения.}
+    \label{26}
+\end{center}
+
+\item Для проверки направим ещё несколько тестовых писем  (Рис. \ref{27})
+
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/27.png}
+    \captionof{figure}{Тестовые письма в почтовом ящике.}
+    \label{27}
+\end{center}
+
+\item Параллельно посмотрим, какие сообщения выдаются при мониторинге почтовой службы на сервере, а также при использовании \texttt{doveadm} и \texttt{mail} (Рис. \ref{28}-\ref{30}).
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/28.png}
+    \captionof{figure}{Просмотр логов почтовой службы при отправке писем с клиента.}
+    \label{16}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/29.png}
+    \captionof{figure}{Просмотр полученных писем через утилиту \texttt{mail}.}
+    \label{17}
+\end{center}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/30.png}
+    \captionof{figure}{Просмотр полученных писем через утилиту \texttt{doveadm}.}
+    \label{30}
+\end{center}
+
+\end{center}
+
+\item Проверим работу почтовой службы, используя на сервере протокол Telnet:
+  \begin{itemize}
+  \item подключимся с помощью протокола Telnet к почтовому серверу по протоколу POP3 (через порт 110), введём свой логин для подключения и пароль (Рис. \ref{31}):
+    \begin{minted}{bash}
+      telnet mail.oskalashnikova.net 110
+      user oskalashnikova
+      pass ******
+    \end{minted}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/31.png}
+    \captionof{figure}{Подключение к почтовому серверу через протокол Telnet.}
+    \label{31}
+\end{center}
+
+\end{enumerate}
+\subsection{Внесение изменений в настройки внутреннего окружения виртуальной машины}
+\begin{enumerate}
+
+\item На виртуальной машине \texttt{server} перейдём в каталог для внесения изменений в настройки внутреннего окружения \texttt{/vagrant/provision/server/}. В соответствующие подкаталоги поместили конфигурационные файлы Dovecot (Рис. \ref{32}):
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/32.png}
+    \captionof{figure}{Копирование конфигурационных файлов.}
+    \label{32}
+\end{center}
+\item Внесём изменения в файл \texttt{/vagrant/provision/server/mail.sh}, добавив в него строки (Рис. \ref{33}):
+\begin{itemize}
+  \item по установке Dovecot и Telnet;
+  \item по настройке межсетевого экрана;
+  \item по настройке Postfix в части задания месторасположения почтового ящика;
+  \item по перезапуску Postfix и запуску Dovecot.
+\end{itemize}
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/33.png}
+    \captionof{figure}{Содержание файла \texttt{mail.sh}.}
+    \label{32}
+\end{center}
+\item На виртуальной машине \texttt{client} в каталоге \texttt{/vagrant/provision/client} скорректируем файл \texttt{mail.sh}, прописав в нём (Рис. \ref{34}):
+\begin{center}
+    \centering
+    \includegraphics[width=\textwidth]{../images/34.png}
+    \captionof{figure}{Содержание файла \texttt{mail.sh} на клиенте.}
+    \label{32}
+\end{center}
+\end{enumerate}
+
+\section{Выводы}
+В результате выполнения лабораторной работы приобрели практические навыки по установке и простейшему конфигурированию POP3/IMAP-сервера.
+\end{document}

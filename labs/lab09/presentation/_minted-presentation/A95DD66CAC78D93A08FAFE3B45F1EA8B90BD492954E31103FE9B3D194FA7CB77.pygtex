@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nv}{mail\PYGZus{}location}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }maildir:\PYGZti{}/Maildir
+\end{Verbatim}

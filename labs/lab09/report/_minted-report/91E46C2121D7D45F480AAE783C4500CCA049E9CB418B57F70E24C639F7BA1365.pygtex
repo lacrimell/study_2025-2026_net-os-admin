@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{+w}{    }passdb\PYG{+w}{ }\PYG{o}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n+nv}{driver}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }pam
+\PYG{+w}{    }\PYG{o}{\PYGZcb{}}
+\PYG{+w}{    }userdb\PYG{+w}{ }\PYG{o}{\PYGZob{}}
+\PYG{+w}{      }\PYG{n+nv}{driver}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }passwd
+\PYG{+w}{    }\PYG{o}{\PYGZcb{}}
+\end{Verbatim}

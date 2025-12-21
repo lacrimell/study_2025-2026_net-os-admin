@@ -1,0 +1,17 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Подключение к POP3 серверу}
+telnet\PYG{+w}{ }mail.example.com\PYG{+w}{ }\PYG{l+m}{110}
+USER\PYG{+w}{ }username
+PASS\PYG{+w}{ }password
+LIST\PYG{+w}{        }\PYG{c+c1}{\PYGZsh{} список писем}
+RETR\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} получить письмо №1}
+QUIT
+
+\PYG{c+c1}{\PYGZsh{} Подключение к IMAP серверу}
+telnet\PYG{+w}{ }mail.example.com\PYG{+w}{ }\PYG{l+m}{143}
+a1\PYG{+w}{ }LOGIN\PYG{+w}{ }username\PYG{+w}{ }password
+a2\PYG{+w}{ }LIST\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}\PYGZdq{}}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}*\PYGZdq{}}\PYG{+w}{     }\PYG{c+c1}{\PYGZsh{} список папок}
+a3\PYG{+w}{ }SELECT\PYG{+w}{ }INBOX\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} выбрать папку входящих}
+a4\PYG{+w}{ }FETCH\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }BODY\PYG{o}{[}TEXT\PYG{o}{]}\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{} получить текст письма №1}
+a5\PYG{+w}{ }LOGOUT
+\end{Verbatim}

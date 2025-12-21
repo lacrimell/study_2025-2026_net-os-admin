@@ -1,0 +1,50 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{}!/bin/bash}
+\PYG{+w}{  }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Provisioning script }\PYG{n+nv}{\PYGZdl{}0}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{+w}{  }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Install needed packages\PYGZdq{}}
+\PYG{+w}{  }dnf\PYG{+w}{ }\PYGZhy{}y\PYG{+w}{ }install\PYG{+w}{ }postfix
+\PYG{+w}{  }dnf\PYG{+w}{ }\PYGZhy{}y\PYG{+w}{ }install\PYG{+w}{ }dovecot
+\PYG{+w}{  }dnf\PYG{+w}{ }\PYGZhy{}y\PYG{+w}{ }install\PYG{+w}{ }telnet
+\PYG{+w}{  }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Copy configuration files\PYGZdq{}}
+\PYG{+w}{  }cp\PYG{+w}{ }\PYGZhy{}R\PYG{+w}{ }/vagrant/provision/server/mail/etc/*\PYG{+w}{ }/etc
+\PYG{+w}{  }chown\PYG{+w}{ }\PYGZhy{}R\PYG{+w}{ }root:root\PYG{+w}{ }/etc/postfix
+\PYG{+w}{  }restorecon\PYG{+w}{ }\PYGZhy{}vR\PYG{+w}{ }/etc
+\PYG{+w}{  }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Configure firewall\PYGZdq{}}
+\PYG{+w}{  }firewall\PYGZhy{}cmd\PYG{+w}{ }\PYGZhy{}\PYGZhy{}add\PYGZhy{}service\PYG{+w}{ }smtp\PYG{+w}{ }\PYGZhy{}\PYGZhy{}permanent
+\PYG{+w}{  }firewall\PYGZhy{}cmd\PYG{+w}{ }\PYGZhy{}\PYGZhy{}add\PYGZhy{}service\PYG{+w}{ }pop3\PYG{+w}{ }\PYGZhy{}\PYGZhy{}permanent
+\PYG{+w}{  }firewall\PYGZhy{}cmd\PYG{+w}{ }\PYGZhy{}\PYGZhy{}add\PYGZhy{}service\PYG{+w}{ }pop3s\PYG{+w}{ }\PYGZhy{}\PYGZhy{}permanent
+\PYG{+w}{  }firewall\PYGZhy{}cmd\PYG{+w}{ }\PYGZhy{}\PYGZhy{}add\PYGZhy{}service\PYG{+w}{ }imap\PYG{+w}{ }\PYGZhy{}\PYGZhy{}permanent
+\PYG{+w}{  }firewall\PYGZhy{}cmd\PYG{+w}{ }\PYGZhy{}\PYGZhy{}add\PYGZhy{}service\PYG{+w}{ }imaps\PYG{+w}{ }\PYGZhy{}\PYGZhy{}permanent
+\PYG{+w}{  }firewall\PYGZhy{}cmd\PYG{+w}{ }\PYGZhy{}\PYGZhy{}add\PYGZhy{}service\PYG{+w}{ }smtp\PYGZhy{}submission\PYG{+w}{ }\PYGZhy{}\PYGZhy{}permanent
+\PYG{+w}{  }firewall\PYGZhy{}cmd\PYG{+w}{ }\PYGZhy{}\PYGZhy{}reload
+\PYG{+w}{  }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Start postfix service\PYGZdq{}}
+\PYG{+w}{  }systemctl\PYG{+w}{ }\PYG{n+nb}{enable}\PYG{+w}{ }postfix
+\PYG{+w}{  }systemctl\PYG{+w}{ }start\PYG{+w}{ }postfix
+\PYG{+w}{  }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Configure postfix\PYGZdq{}}
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}mydomain = user.net\PYGZsq{}}
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}myorigin = \PYGZdl{}mydomain\PYGZsq{}}
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}inet\PYGZus{}protocols = ipv4\PYGZsq{}}
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}inet\PYGZus{}interfaces = all\PYGZsq{}}
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}mydestination = \PYGZdl{}myhostname, localhost.\PYGZdl{}mydomain, localhost, \PYGZdl{}mydomain\PYGZsq{}}
+\PYG{+w}{  }\PYG{c+c1}{\PYGZsh{}postconf \PYGZhy{}e \PYGZsq{}mynetworks = 127.0.0.0/8, 192.168.0.0/16\PYGZsq{}}
+\PYG{+w}{  }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Configure postfix for dovecot\PYGZdq{}}
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}home\PYGZus{}mailbox = Maildir/\PYGZsq{}}
+\PYG{+w}{  }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Configure postfix for auth\PYGZdq{}}
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtpd\PYGZus{}sasl\PYGZus{}type = dovecot\PYGZsq{}}
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtpd\PYGZus{}sasl\PYGZus{}path = private/auth\PYGZsq{}}
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtpd\PYGZus{}recipient\PYGZus{}restrictions = reject\PYGZus{}unknown\PYGZus{}recipient\PYGZus{}domain, permit\PYGZus{}mynetworks, reject\PYGZus{}non\PYGZus{}fqdn\PYGZus{}recipient, reject\PYGZus{}unauth\PYGZus{}destination, reject\PYGZus{}unverified\PYGZus{}recipient, permit\PYGZsq{}}
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}mynetworks = 127.0.0.0/8\PYGZsq{}}
+\PYG{+w}{  }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Configure postfix for SMTP over TLS\PYGZdq{}}
+\PYG{+w}{  }cp\PYG{+w}{ }/etc/pki/dovecot/certs/dovecot.pem\PYG{+w}{ }/etc/pki/tls/certs
+\PYG{+w}{  }cp\PYG{+w}{ }/etc/pki/dovecot/private/dovecot.pem\PYG{+w}{ }/etc/pki/tls/private
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtpd\PYGZus{}tls\PYGZus{}cert\PYGZus{}file=/etc/pki/tls/certs/dovecot.pem\PYGZsq{}}
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtpd\PYGZus{}tls\PYGZus{}key\PYGZus{}file=/etc/pki/tls/private/dovecot.pem\PYGZsq{}}
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtpd\PYGZus{}tls\PYGZus{}session\PYGZus{}cache\PYGZus{}database = btree:/var/lib/postfix/smtpd\PYGZus{}scache\PYGZsq{}}
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtpd\PYGZus{}tls\PYGZus{}security\PYGZus{}level = may\PYGZsq{}}
+\PYG{+w}{  }postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtp\PYGZus{}tls\PYGZus{}security\PYGZus{}level = may\PYGZsq{}}
+\PYG{+w}{  }postfix\PYG{+w}{ }set\PYGZhy{}permissions
+\PYG{+w}{  }restorecon\PYG{+w}{ }\PYGZhy{}vR\PYG{+w}{ }/etc
+\PYG{+w}{  }systemctl\PYG{+w}{ }stop\PYG{+w}{ }postfix
+\PYG{+w}{  }systemctl\PYG{+w}{ }start\PYG{+w}{ }postfix
+\PYG{+w}{  }systemctl\PYG{+w}{ }restart\PYG{+w}{ }dovecot
+\end{Verbatim}

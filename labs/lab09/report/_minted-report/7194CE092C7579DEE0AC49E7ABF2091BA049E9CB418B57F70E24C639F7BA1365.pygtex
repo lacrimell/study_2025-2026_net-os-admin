@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{+w}{    }firewall\PYGZhy{}cmd\PYG{+w}{ }\PYGZhy{}\PYGZhy{}get\PYGZhy{}services
+\PYG{+w}{    }firewall\PYGZhy{}cmd\PYG{+w}{ }\PYGZhy{}\PYGZhy{}add\PYGZhy{}service\PYG{o}{=}pop3\PYG{+w}{ }\PYGZhy{}\PYGZhy{}permanent
+\PYG{+w}{    }firewall\PYGZhy{}cmd\PYG{+w}{ }\PYGZhy{}\PYGZhy{}add\PYGZhy{}service\PYG{o}{=}pop3s\PYG{+w}{ }\PYGZhy{}\PYGZhy{}permanent
+\PYG{+w}{    }firewall\PYGZhy{}cmd\PYG{+w}{ }\PYGZhy{}\PYGZhy{}add\PYGZhy{}service\PYG{o}{=}imap\PYG{+w}{ }\PYGZhy{}\PYGZhy{}permanent
+\PYG{+w}{    }firewall\PYGZhy{}cmd\PYG{+w}{ }\PYGZhy{}\PYGZhy{}add\PYGZhy{}service\PYG{o}{=}imaps\PYG{+w}{ }\PYGZhy{}\PYGZhy{}permanent
+\PYG{+w}{    }firewall\PYGZhy{}cmd\PYG{+w}{ }\PYGZhy{}\PYGZhy{}reload
+\PYG{+w}{    }firewall\PYGZhy{}cmd\PYG{+w}{ }\PYGZhy{}\PYGZhy{}list\PYGZhy{}services
+\end{Verbatim}

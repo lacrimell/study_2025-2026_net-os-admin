@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+From: oskalashnikova@oskalashnikova.net  \PYGZsh{} Отправитель
+To: oskalashnikova@oskalashnikova.net    \PYGZsh{} Получатель
+Date: Tue, 15 Apr 2025 10:30:00 +0300    \PYGZsh{} Дата и время
+Subject: Тестовое письмо                 \PYGZsh{} Тема
+Message\PYGZhy{}ID: \PYGZlt{}20250415103000@server\PYGZgt{}      \PYGZsh{} Уникальный ID
+MIME\PYGZhy{}Version: 1.0                        \PYGZsh{} Версия MIME
+Content\PYGZhy{}Type: text/plain; charset=UTF\PYGZhy{}8  \PYGZsh{} Тип содержимого
+\end{Verbatim}

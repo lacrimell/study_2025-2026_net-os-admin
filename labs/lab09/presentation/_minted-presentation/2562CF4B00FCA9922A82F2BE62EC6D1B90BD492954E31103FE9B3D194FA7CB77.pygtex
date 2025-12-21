@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{+w}{    }sudo\PYG{+w}{ }\PYGZhy{}i
+\PYG{+w}{    }dnf\PYG{+w}{ }\PYGZhy{}y\PYG{+w}{ }install\PYG{+w}{ }dovecot\PYG{+w}{ }telnet
+\end{Verbatim}

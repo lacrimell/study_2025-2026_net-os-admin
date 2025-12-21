@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+sudo\PYG{+w}{ }\PYGZhy{}i
+dnf\PYG{+w}{ }\PYGZhy{}y\PYG{+w}{ }install\PYG{+w}{ }alpine
+\end{Verbatim}

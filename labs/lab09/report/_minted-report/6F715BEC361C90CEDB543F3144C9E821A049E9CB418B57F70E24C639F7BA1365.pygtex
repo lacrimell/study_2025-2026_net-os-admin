@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{+w}{      }telnet\PYG{+w}{ }mail.oskalashnikova.net\PYG{+w}{ }\PYG{l+m}{110}
+\PYG{+w}{      }user\PYG{+w}{ }oskalashnikova
+\PYG{+w}{      }pass\PYG{+w}{ }******
+\end{Verbatim}

@@ -1,0 +1,19 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Просмотр информации о пользователе}
+doveadm\PYG{+w}{ }user\PYG{+w}{ }username
+
+\PYG{c+c1}{\PYGZsh{} Поиск писем по критериям}
+doveadm\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}u\PYG{+w}{ }username\PYG{+w}{ }mailbox\PYG{+w}{ }INBOX
+
+\PYG{c+c1}{\PYGZsh{} Получение содержимого письма}
+doveadm\PYG{+w}{ }fetch\PYG{+w}{ }\PYGZhy{}u\PYG{+w}{ }username\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}body peek.text\PYGZdq{}}
+
+\PYG{c+c1}{\PYGZsh{} Экспорт почтового ящика в формат mbox}
+doveadm\PYG{+w}{ }backup\PYG{+w}{ }\PYGZhy{}u\PYG{+w}{ }username\PYG{+w}{ }\PYGZhy{}f\PYG{+w}{ }mbox
+
+\PYG{c+c1}{\PYGZsh{} Статистика работы сервера}
+doveadm\PYG{+w}{ }stats
+
+\PYG{c+c1}{\PYGZsh{} Перестроение индексов для восстановления}
+doveadm\PYG{+w}{ }index\PYG{+w}{ }\PYGZhy{}u\PYG{+w}{ }username\PYG{+w}{ }INBOX
+\end{Verbatim}

@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\PYG{l+s+se}{\PYGZbs{}b}egin\PYG{o}{\PYGZob{}}frame\PYG{o}{\PYGZcb{}}
+\PYG{l+s+se}{\PYGZbs{}f}rametitle\PYG{o}{\PYGZob{}}Настройка\PYG{+w}{ }Dovecot\PYG{+w}{ }\PYGZhy{}\PYG{+w}{ }основные\PYG{+w}{ }конфигурации\PYG{o}{\PYGZcb{}}
+\PYG{l+s+se}{\PYGZbs{}b}egin\PYG{o}{\PYGZob{}}itemize\PYG{o}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{l+s+se}{\PYGZbs{}i}tem\PYG{+w}{ }В\PYG{+w}{ }файле\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}t}exttt\PYG{o}{\PYGZob{}}/etc/dovecot/dovecot.conf\PYG{o}{\PYGZcb{}}\PYG{+w}{ }задаем\PYG{+w}{ }протоколы:
+\PYG{+w}{    }\PYG{l+s+se}{\PYGZbs{}b}egin\PYG{o}{\PYGZob{}}minted\PYG{o}{\PYGZcb{}\PYGZob{}}bash\PYG{o}{\PYGZcb{}}
+\PYG{n+nv}{protocols}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }imap\PYG{+w}{ }pop3
+\end{Verbatim}

@@ -1,0 +1,19 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Просмотр списка почтовых ящиков пользователя}
+doveadm\PYG{+w}{ }mailbox\PYG{+w}{ }list\PYG{+w}{ }\PYGZhy{}u\PYG{+w}{ }oskalashnikova
+
+\PYG{c+c1}{\PYGZsh{} Поиск писем по критериям}
+doveadm\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}u\PYG{+w}{ }oskalashnikova\PYG{+w}{ }mailbox\PYG{+w}{ }INBOX
+
+\PYG{c+c1}{\PYGZsh{} Получение информации о письме}
+doveadm\PYG{+w}{ }fetch\PYG{+w}{ }\PYGZhy{}u\PYG{+w}{ }oskalashnikova\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}uid body\PYGZdq{}}\PYG{+w}{ }mailbox\PYG{+w}{ }INBOX
+
+\PYG{c+c1}{\PYGZsh{} Проверка аутентификации пользователя}
+doveadm\PYG{+w}{ }auth\PYG{+w}{ }\PYG{n+nb}{test}\PYG{+w}{ }oskalashnikova
+
+\PYG{c+c1}{\PYGZsh{} Просмотр статистики}
+doveadm\PYG{+w}{ }stats
+
+\PYG{c+c1}{\PYGZsh{} Принудительное удаление блокировок}
+doveadm\PYG{+w}{ }force\PYGZhy{}resync\PYG{+w}{ }\PYGZhy{}u\PYG{+w}{ }oskalashnikova\PYG{+w}{ }INBOX
+\end{Verbatim}

@@ -1,0 +1,13 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Configure postfix\PYGZdq{}}
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}mydomain = user.net\PYGZsq{}}
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}myorigin = \PYGZdl{}mydomain\PYGZsq{}}
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}inet\PYGZus{}protocols = ipv4\PYGZsq{}}
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}inet\PYGZus{}interfaces = all\PYGZsq{}}
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}mydestination = \PYGZdl{}myhostname, localhost.\PYGZdl{}mydomain, localhost, \PYGZdl{}mydomain\PYGZsq{}}
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Configure postfix for dovecot\PYGZdq{}}
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}home\PYGZus{}mailbox = Maildir/\PYGZsq{}}
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Configure postfix for auth\PYGZdq{}}
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtpd\PYGZus{}sasl\PYGZus{}type = dovecot\PYGZsq{}}
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtpd\PYGZus{}sasl\PYGZus{}path = private/auth\PYGZsq{}}
+\end{Verbatim}

@@ -1,0 +1,17 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtpd\PYGZus{}recipient\PYGZus{}restrictions = reject\PYGZus{}unknown\PYGZus{}recipient\PYGZus{}domain, permit\PYGZus{}mynetworks, reject\PYGZus{}non\PYGZus{}fqdn\PYGZus{}recipient, reject\PYGZus{}unauth\PYGZus{}destination, reject\PYGZus{}unverified\PYGZus{}recipient, permit\PYGZsq{}}
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}mynetworks = 127.0.0.0/8\PYGZsq{}}
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Configure postfix for SMTP over TLS\PYGZdq{}}
+cp\PYG{+w}{ }/etc/pki/dovecot/certs/dovecot.pem\PYG{+w}{ }/etc/pki/tls/certs
+cp\PYG{+w}{ }/etc/pki/dovecot/private/dovecot.pem\PYG{+w}{ }/etc/pki/tls/private
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtpd\PYGZus{}tls\PYGZus{}cert\PYGZus{}file=/etc/pki/tls/certs/dovecot.pem\PYGZsq{}}
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtpd\PYGZus{}tls\PYGZus{}key\PYGZus{}file=/etc/pki/tls/private/dovecot.pem\PYGZsq{}}
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtpd\PYGZus{}tls\PYGZus{}session\PYGZus{}cache\PYGZus{}database = btree:/var/lib/postfix/smtpd\PYGZus{}scache\PYGZsq{}}
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtpd\PYGZus{}tls\PYGZus{}security\PYGZus{}level = may\PYGZsq{}}
+postconf\PYG{+w}{ }\PYGZhy{}e\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}smtp\PYGZus{}tls\PYGZus{}security\PYGZus{}level = may\PYGZsq{}}
+postfix\PYG{+w}{ }set\PYGZhy{}permissions
+restorecon\PYG{+w}{ }\PYGZhy{}vR\PYG{+w}{ }/etc
+systemctl\PYG{+w}{ }stop\PYG{+w}{ }postfix
+systemctl\PYG{+w}{ }start\PYG{+w}{ }postfix
+systemctl\PYG{+w}{ }restart\PYG{+w}{ }dovecot
+\end{Verbatim}

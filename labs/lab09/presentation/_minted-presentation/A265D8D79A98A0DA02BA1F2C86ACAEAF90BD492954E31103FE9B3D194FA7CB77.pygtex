@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+ch}{\PYGZsh{}!/bin/bash}
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Provisioning script }\PYG{n+nv}{\PYGZdl{}0}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Install needed packages\PYGZdq{}}
+dnf\PYG{+w}{ }\PYGZhy{}y\PYG{+w}{ }install\PYG{+w}{ }postfix
+dnf\PYG{+w}{ }\PYGZhy{}y\PYG{+w}{ }install\PYG{+w}{ }dovecot
+dnf\PYG{+w}{ }\PYGZhy{}y\PYG{+w}{ }install\PYG{+w}{ }telnet
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Copy configuration files\PYGZdq{}}
+cp\PYG{+w}{ }\PYGZhy{}R\PYG{+w}{ }/vagrant/provision/server/mail/etc/*\PYG{+w}{ }/etc
+chown\PYG{+w}{ }\PYGZhy{}R\PYG{+w}{ }root:root\PYG{+w}{ }/etc/postfix
+restorecon\PYG{+w}{ }\PYGZhy{}vR\PYG{+w}{ }/etc
+\end{Verbatim}

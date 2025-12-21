@@ -1,0 +1,21 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Подключение к POP3 серверу}
+telnet\PYG{+w}{ }mail.oskalashnikova.net\PYG{+w}{ }\PYG{l+m}{110}
+USER\PYG{+w}{ }oskalashnikova
+PASS\PYG{+w}{ }пароль
+LIST\PYG{+w}{          }\PYG{c+c1}{\PYGZsh{} список писем}
+RETR\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{        }\PYG{c+c1}{\PYGZsh{} получить первое письмо}
+DELE\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{        }\PYG{c+c1}{\PYGZsh{} удалить первое письмо}
+QUIT
+
+\PYG{c+c1}{\PYGZsh{} Подключение к SMTP серверу}
+telnet\PYG{+w}{ }mail.oskalashnikova.net\PYG{+w}{ }\PYG{l+m}{25}
+HELO\PYG{+w}{ }client.oskalashnikova.net
+MAIL\PYG{+w}{ }FROM:\PYG{+w}{ }\PYGZlt{}oskalashnikova@oskalashnikova.net\PYGZgt{}
+RCPT\PYG{+w}{ }TO:\PYG{+w}{ }\PYGZlt{}user@example.com\PYGZgt{}
+DATA\PYG{+w}{          }\PYG{c+c1}{\PYGZsh{} начало ввода письма}
+Subject:\PYG{+w}{ }Тест
+Текст\PYG{+w}{ }письма
+.\PYG{+w}{             }\PYG{c+c1}{\PYGZsh{} точка на отдельной строке завершает письмо}
+QUIT
+\end{Verbatim}

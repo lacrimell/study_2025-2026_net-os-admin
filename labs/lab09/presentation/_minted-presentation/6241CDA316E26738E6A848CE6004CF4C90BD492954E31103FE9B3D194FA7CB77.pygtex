@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nb}{cd}\PYG{+w}{ }/vagrant/provision/server
+mkdir\PYG{+w}{ }\PYGZhy{}p\PYG{+w}{ }mail/etc/dovecot/conf.d
+cp\PYG{+w}{ }\PYGZhy{}R\PYG{+w}{ }/etc/dovecot/dovecot.conf\PYG{+w}{ }mail/etc/dovecot/
+cp\PYG{+w}{ }\PYGZhy{}R\PYG{+w}{ }/etc/dovecot/conf.d/10\PYGZhy{}auth.conf\PYG{+w}{ }mail/etc/dovecot/conf.d/
+\PYG{c+c1}{\PYGZsh{} ... и другие конфигурационные файлы}
+\end{Verbatim}

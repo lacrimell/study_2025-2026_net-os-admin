@@ -1,0 +1,384 @@
+\input{preamble.tex}
+
+\title{Лабораторная работа № 9. \\ Настройка POP3/IMAP сервера}
+\author{Калашникова Ольга \\ НПИбд-01-23}
+\institute{Российский университет дружбы народов имени Патриса Лумумбы}
+\date{2025}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}
+\frametitle{Цель работы}
+\begin{itemize}
+    \item Приобретение практических навыков по установке и простейшему конфигурированию POP3/IMAP-сервера
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Установка Dovecot}
+Установили на сервере необходимые для работы пакеты:
+\begin{minted}{bash}
+    sudo -i
+    dnf -y install dovecot telnet
+\end{minted}
+\end{frame}
+
+\begin{frame}
+\frametitle{Установка Dovecot}
+\centering
+\includegraphics[width=\textwidth]{../images/1.png}
+\captionof{figure}{Успешная установка Dovecot.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка Dovecot - Разрешение протоколов}
+\centering
+\includegraphics[width=\textwidth]{../images/2.png}
+\captionof{figure}{Разрешенные почтовые протоколы в конфигурации Dovecot.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка Dovecot - Аутентификация}
+\centering
+\includegraphics[width=\textwidth]{../images/3.png}
+\captionof{figure}{Указание метода аутентификации \texttt{plain}.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка Dovecot - Поиск пользователей}
+\centering
+\includegraphics[width=\textwidth]{../images/4.png}
+\captionof{figure}{Использование файла \texttt{passwd} и \texttt{pam} для поиска паролей.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка Dovecot - Расположение почтовых ящиков}
+\centering
+\includegraphics[width=\textwidth]{../images/5.png}
+\captionof{figure}{Настройка месторасположения почтовых ящиков пользователей.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка Postfix}
+\centering
+\includegraphics[width=\textwidth]{../images/6.png}
+\captionof{figure}{Создание каталога для доставки почты в Postfix.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка межсетевого экрана}
+\centering
+\includegraphics[width=\textwidth]{../images/7.png}
+\captionof{figure}{Настройка межсетевого экрана для работы служб протоколов POP3 и IMAP.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка SELinux}
+\centering
+\includegraphics[width=\textwidth]{../images/8.png}
+\captionof{figure}{Восстановление контекста безопасности в SELinux.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Запуск служб}
+\centering
+\includegraphics[width=\textwidth]{../images/9.png}
+\captionof{figure}{Перезапуск Postfix и запуск Dovecot.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Проверка работы - Мониторинг логов}
+\centering
+\includegraphics[width=\textwidth]{../images/10.png}
+\captionof{figure}{Запуск мониторинга работы почтовой службы.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Проверка работы - Просмотр почты через mail}
+\centering
+\includegraphics[width=\textwidth]{../images/11.png}
+\captionof{figure}{Просмотр имеющейся почты на сервере.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Проверка работы - Просмотр через doveadm}
+\centering
+\includegraphics[width=\textwidth]{../images/12.png}
+\captionof{figure}{Просмотр почты пользователя \texttt{oskalashnikova} через doveadm.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка клиента - Переход в режим root}
+\centering
+\includegraphics[width=\textwidth]{../images/13.png}
+\captionof{figure}{Переход в режим суперпользователя на виртуальной машине \texttt{client}.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка клиента - Установка Evolution}
+\centering
+\includegraphics[width=\textwidth]{../images/14.png}
+\captionof{figure}{Установка почтового клиента Evolution.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка Evolution - Стартовое окно}
+\centering
+\includegraphics[width=0.8\textwidth]{../images/15.png}
+\captionof{figure}{Стартовое окно настройки Evolution.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка Evolution - Учетная запись}
+\centering
+\includegraphics[width=0.8\textwidth]{../images/16.png}
+\captionof{figure}{Настройка учётной записи почты.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка Evolution - IMAP сервер}
+\centering
+\includegraphics[width=0.8\textwidth]{../images/17.png}
+\captionof{figure}{Настройка IMAP-сервера.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка Evolution - SMTP сервер}
+\centering
+\includegraphics[width=0.8\textwidth]{../images/18.png}
+\captionof{figure}{Настройка SMTP-сервера.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка Evolution - Проверка настроек}
+\centering
+\includegraphics[width=0.8\textwidth]{../images/19.png}
+\captionof{figure}{Проверка заданных настроек.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Отправка тестового письма - Окно отправки}
+\centering
+\includegraphics[width=\textwidth]{../images/20.png}
+\captionof{figure}{Окно отправки письма.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Отправка тестового письма - Сохранение}
+\centering
+\includegraphics[width=\textwidth]{../images/21.png}
+\captionof{figure}{Сообщение о том, что письмо сохранено.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Отправка тестового письма - Предупреждение SSL}
+\centering
+\includegraphics[width=\textwidth]{../images/22.png}
+\captionof{figure}{Окно предупреждения о ненадёжном SSL/TLS-сертификате.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Отправка тестового письма - Аутентификация}
+\centering
+\includegraphics[width=\textwidth]{../images/23.png}
+\captionof{figure}{Запрос аутентификации для почтового аккаунта.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Отправка тестового письма - Второе письмо}
+\centering
+\includegraphics[width=\textwidth]{../images/24.png}
+\captionof{figure}{Отправка ещё одного письма.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Проверка доставки - Успешная доставка}
+\centering
+\includegraphics[width=\textwidth]{../images/25.png}
+\captionof{figure}{Успешная доставка письма в почтовый ящик.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Проверка доставки - Содержание письма}
+\centering
+\includegraphics[width=\textwidth]{../images/26.png}
+\captionof{figure}{Содержание полученного сообщения.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Проверка доставки - Все письма}
+\centering
+\includegraphics[width=\textwidth]{../images/27.png}
+\captionof{figure}{Тестовые письма в почтовом ящике.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Мониторинг - Логи сервера}
+\centering
+\includegraphics[width=\textwidth]{../images/28.png}
+\captionof{figure}{Просмотр логов почтовой службы при отправке писем с клиента.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Мониторинг - Проверка через mail}
+\centering
+\includegraphics[width=\textwidth]{../images/29.png}
+\captionof{figure}{Просмотр полученных писем через утилиту \texttt{mail}.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Мониторинг - Проверка через doveadm}
+\centering
+\includegraphics[width=\textwidth]{../images/30.png}
+\captionof{figure}{Просмотр полученных писем через утилиту \texttt{doveadm}.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Тестирование через Telnet}
+\centering
+\includegraphics[width=\textwidth]{../images/31.png}
+\captionof{figure}{Подключение к почтовому серверу через протокол Telnet.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка окружения - Копирование конфигураций}
+\centering
+\includegraphics[width=\textwidth]{../images/32.png}
+\captionof{figure}{Копирование конфигурационных файлов Dovecot.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка окружения - Скрипт на сервере}
+\centering
+\includegraphics[width=\textwidth]{../images/33.png}
+\captionof{figure}{Содержание файла \texttt{mail.sh} на сервере.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Настройка окружения - Скрипт на клиенте}
+\centering
+\includegraphics[width=\textwidth]{../images/34.png}
+\captionof{figure}{Содержание файла \texttt{mail.sh} на клиенте.}
+\end{frame}
+
+\begin{frame}
+\frametitle{Контрольные вопросы}
+\textbf{1. За что отвечает протокол SMTP?} \\
+SMTP (Simple Mail Transfer Protocol) отвечает за отправку и пересылку электронной почты между серверами. Он определяет правила передачи сообщений от отправителя к получателю через промежуточные почтовые серверы.
+
+\textbf{2. За что отвечает протокол IMAP?} \\
+IMAP (Internet Message Access Protocol) позволяет клиентам получать доступ к почтовым сообщениям, хранящимся на сервере, без необходимости их скачивания на локальное устройство. Сообщения остаются на сервере, что позволяет работать с почтой с нескольких устройств.
+\end{frame}
+
+\begin{frame}
+\frametitle{Контрольные вопросы}
+\textbf{3. За что отвечает протокол POP3?} \\
+POP3 (Post Office Protocol version 3) используется для загрузки электронной почты с сервера на локальное устройство. В отличие от IMAP, POP3 обычно удаляет сообщения с сервера после их загрузки (хотя это можно настроить).
+
+\textbf{4. В чём назначение Dovecot?} \\
+Dovecot - это open-source IMAP и POP3 сервер для Linux/UNIX-подобных систем. Его назначение - обеспечение безопасного доступа пользователей к их почтовым ящикам по протоколам IMAP и POP3.
+\end{frame}
+
+\begin{frame}
+\frametitle{Контрольные вопросы}
+\textbf{5. В каких файлах обычно находятся настройки работы Dovecot?} \\
+Основные конфигурационные файлы Dovecot:
+\begin{itemize}
+\item \texttt{/etc/dovecot/dovecot.conf}  главный конфигурационный файл
+\item \texttt{/etc/dovecot/conf.d/10-auth.conf}  настройки аутентификации
+\item \texttt{/etc/dovecot/conf.d/auth-system.conf.ext}  системная аутентификация через PAM
+\item \texttt{/etc/dovecot/conf.d/10-mail.conf}  настройки почтовых ящиков
+\item \texttt{/etc/dovecot/conf.d/10-ssl.conf}  настройки SSL/TLS
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Контрольные вопросы}
+\textbf{6. В чём назначение Postfix?} \\
+Postfix - это MTA (Mail Transfer Agent), который отвечает за прием, обработку и доставку электронной почты. Он работает с протоколом SMTP и взаимодействует с Dovecot для предоставления полного почтового решения.
+
+\textbf{7. Какие методы аутентификации пользователей можно использовать в Dovecot?} \\
+Основные методы аутентификации в Dovecot:
+\begin{itemize}
+\item \texttt{plain} - обычная текстовая аутентификация (часто используется с SSL/TLS)
+\item \texttt{login} - устаревший метод, похожий на plain
+\item \texttt{cram-md5} - более безопасный метод с использованием challenge-response
+\item \texttt{digest-md5} - аналогично cram-md5
+\item \texttt{apop} - для POP3
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Контрольные вопросы}
+\textbf{8. Пример заголовка письма с пояснениями:}
+\begin{minted}{text}
+From: oskalashnikova@oskalashnikova.net  # Отправитель
+To: oskalashnikova@oskalashnikova.net    # Получатель
+Date: Tue, 15 Apr 2025 10:30:00 +0300    # Дата и время
+Subject: Тестовое письмо                 # Тема
+Message-ID: <20250415103000@server>      # Уникальный ID
+MIME-Version: 1.0                        # Версия MIME
+Content-Type: text/plain; charset=UTF-8  # Тип содержимого
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Контрольные вопросы}
+\textbf{9. Примеры команд для работы с почтовыми протоколами через telnet:}
+\begin{minted}{bash}
+# Подключение к POP3 серверу
+telnet mail.oskalashnikova.net 110
+USER oskalashnikova
+PASS пароль
+LIST          # список писем
+RETR 1        # получить первое письмо
+DELE 1        # удалить первое письмо
+QUIT
+
+# Подключение к SMTP серверу
+telnet mail.oskalashnikova.net 25
+HELO client.oskalashnikova.net
+MAIL FROM: <oskalashnikova@oskalashnikova.net>
+RCPT TO: <user@example.com>
+DATA          # начало ввода письма
+Subject: Тест
+Текст письма
+.             # точка на отдельной строке завершает письмо
+QUIT
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Контрольные вопросы}
+\textbf{10. Примеры работы с doveadm:}
+\begin{minted}{bash}
+# Просмотр списка почтовых ящиков пользователя
+doveadm mailbox list -u oskalashnikova
+
+# Поиск писем по критериям
+doveadm search -u oskalashnikova mailbox INBOX
+
+# Получение информации о письме
+doveadm fetch -u oskalashnikova "uid body" mailbox INBOX
+
+# Проверка аутентификации пользователя
+doveadm auth test oskalashnikova
+
+# Просмотр статистики
+doveadm stats
+
+# Принудительное удаление блокировок
+doveadm force-resync -u oskalashnikova INBOX
+\end{minted}
+\end{frame}
+
+\begin{frame}
+\frametitle{Выводы}
+\begin{itemize}
+    \item В результате выполнения лабораторной работы приобрели практические навыки по установке и простейшему конфигурированию POP3/IMAP-сервера.
+\end{itemize}
+\end{frame}
+
+\end{document}
